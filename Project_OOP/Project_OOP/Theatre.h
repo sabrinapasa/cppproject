@@ -5,38 +5,44 @@
 
 using namespace std;
 
-class CinemaHall {
+class Theatre {
 	int nrRows;
-	char name[11];
+	char address[51];
 	int* nrSeats;
+	int nrSeatsVIP;
 	bool isAvailable;
 
 	static int  MIN_NR_ROWS;
 	static int  MAX_NR_ROWS;
 	static int MIN_SEATS_PER_ROW;
 	static int MAX_SEATS_PER_ROW;
+	static int MIN_SEATS_VIP;
+	static int MAX_SEATS_VIP;
 
 public:
 	
-	CinemaHall() {
+	Theatre() {
 		this->isAvailable = false;
-		this->name[0] = '\0';
+		this->address[0] = '\0';
 		this->nrRows = 0;
+		this->nrSeatsVIP = 0;
 		this->nrSeats = nullptr;
 	}
 
-	CinemaHall(const int nrRows,const int* nrSeats) {
+	Theatre(const int nrRows, const int* nrSeats, const int nrSeatsVIP) {
 		if (nrRows < MIN_NR_ROWS || nrRows > MAX_NR_ROWS)
 			throw new exception("Value out of range!");
 		this->nrRows = nrRows;
 		this->nrSeats = new int[nrRows];
 		for (int i = 0; i < nrRows; i++)
 			this->nrSeats[i] = nrSeats[i];
+		this->nrSeatsVIP = nrSeatsVIP;
 		this->isAvailable = false;
-		this->name[0] = '\0';
+		this->address[0] = '\0';
 	}
 
-	CinemaHall(const int nrRows, const int* nrSeats, const char* name) {
+	Theatre(const int nrRows, const int* nrSeats, const char* address, const int nrSeatsVIP) {
+		this->nrSeatsVIP = nrSeatsVIP;
 		if (nrRows < MIN_NR_ROWS || nrRows > MAX_NR_ROWS)
 			throw new exception("Value out of range!");
 		this->nrRows = nrRows;
@@ -44,17 +50,17 @@ public:
 		for (int i = 0; i < nrRows; i++)
 			this->nrSeats[i] = nrSeats[i];
 		this->isAvailable = false;
-		if (strlen(name) > 10) {
-			throw new exception("Name too long!");
+		if (strlen(address) > 50) {
+			throw new exception("Address too long!");
 		}
-		strcpy_s(this->name, 11, name);
+		strcpy_s(this->address, 51, address);
 	}
 
 	void setAvailability(bool isAvailable) {
 		this->isAvailable = isAvailable;
 	}
 
-	bool IsAvailable() const{
+	bool IsAvailable() const {
 		return this->isAvailable;
 	}
 
@@ -69,7 +75,7 @@ public:
 	}
 	int getNrRows() const {
 		return this->nrRows;
-	 }
+	}
 
 	void setNrSeats(int nrRows, int* nrSeats) {
 		if (nrSeats == nullptr)
@@ -91,43 +97,60 @@ public:
 		return copy;
 	}
 
-	void setName(const char* name) {
-		if (strlen(name) > 10) {
-			throw new exception("Name too long!");
-		}
-		strcpy_s(this->name, 11, name);
+	void setNrSeatsVIP(int nrSeatsVIP) {
+		if (nrSeatsVIP < MIN_SEATS_VIP || nrSeatsVIP > MAX_SEATS_VIP)
+			throw new exception("Value out of range!");
+		this->nrSeatsVIP = nrSeatsVIP;
 	}
 
-	char* getName() const {
-		char* copy = new char[strlen(this->name)+1];
-		strcpy_s(copy, 11, this->name);
+	int getNrSeatsVIP() {
+		return this->nrSeatsVIP;
+	}
+
+	void setAddress(const char* address) {
+		if (strlen(address) > 50) {
+			throw new exception("Address too long!");
+		}
+		strcpy_s(this->address, 11, address);
+	}
+
+	char* getAddress() const {
+		char* copy = new char[strlen(this->address) + 1];
+		strcpy_s(copy, 51, this->address);
 		return copy;
 	}
 
-	~CinemaHall() {
+	~Theatre() {
 		if (this->nrSeats != nullptr)
 			delete[] this->nrSeats;
 	}
 
-	CinemaHall(const CinemaHall& c) {
-		this->isAvailable = c.isAvailable;
-		strcpy_s(this->name, 11, c.name);
-		this->nrRows = c.nrRows;
-		if (c.nrSeats == nullptr)
+	Theatre(const Theatre& t) {
+		this->isAvailable = t.isAvailable;
+		this->nrSeatsVIP = t.nrSeatsVIP;
+		strcpy_s(this->address, 11, t.address);
+		this->nrRows = t.nrRows;
+		if (t.nrSeats == nullptr)
 			this->nrSeats = nullptr;
 		else {
-			this->nrSeats = new int[c.nrRows];
-			for (int i = 0; i < c.nrRows; i++)
-				this->nrSeats[i] = c.nrSeats[i];
+			this->nrSeats = new int[t.nrRows];
+			for (int i = 0; i < t.nrRows; i++)
+				this->nrSeats[i] = t.nrSeats[i];
 		}
 	}
 
-	void printCinemaHall() const{
-		cout << "Name: ";
-		if (this->name[0] == 0)
-			cout << "No name";
+	void printTheatre() const {
+		cout << "Address: ";
+		if (this->address[0] == 0)
+			cout << "No address";
 		else
-			cout << this->name;
+			cout << this->address;
+		cout << endl;
+		cout << "Number of seats at VIP: ";
+		if (this->nrSeatsVIP == 0)
+			cout << "No of seats at VIP";
+		else
+			cout << this->nrSeatsVIP;
 		cout << endl;
 		cout << "Number of rows: " << this->nrRows << endl;
 		if (this->nrSeats == nullptr)
@@ -139,14 +162,15 @@ public:
 		}
 	}
 
-	CinemaHall& operator=(const CinemaHall& c) {
-		if (this == &c)
+	Theatre& operator=(const Theatre& t) {
+		if (this == &t)
 			return *this;
 
-		this->isAvailable = c.isAvailable;
-		strcpy_s(this->name, 11, c.name);
+		this->isAvailable = t.isAvailable;
+		this->nrSeatsVIP = t.nrSeatsVIP;
+		strcpy_s(this->address, 51, t.address);
 
-		if (c.nrRows == 0) {
+		if (t.nrRows == 0) {
 			if (this->nrSeats != nullptr) {
 				delete[] this->nrSeats;
 				this->nrSeats = nullptr;
@@ -155,16 +179,16 @@ public:
 			return *this;
 		}
 
-		if (c.nrSeats == nullptr) {
+		if (t.nrSeats == nullptr) {
 			if (this->nrSeats != nullptr) {
 				delete[] this->nrSeats;
 				this->nrSeats = nullptr;
 			}
-			this->nrRows = c.nrRows;
+			this->nrRows = t.nrRows;
 			return *this;
 		}
 
-		if (this->nrRows != c.nrRows) {
+		if (this->nrRows != t.nrRows) {
 			if (this->nrSeats != nullptr) {
 				delete[] this->nrSeats;
 				this->nrSeats = nullptr;
@@ -172,18 +196,20 @@ public:
 		}
 
 		if (this->nrSeats == nullptr)
-			this->nrSeats = new int[c.nrRows];
+			this->nrSeats = new int[t.nrRows];
 
-		for (int i = 0; i < c.nrRows; i++)
-			this->nrSeats[i] = c.nrSeats[i];
+		for (int i = 0; i < t.nrRows; i++)
+			this->nrSeats[i] = t.nrSeats[i];
 
-		this->nrRows = c.nrRows;
+		this->nrRows = t.nrRows;
 
 		return *this;
 	}
 };
 
-int CinemaHall::MIN_NR_ROWS = 0;
-int CinemaHall::MAX_NR_ROWS = 30;
-int CinemaHall::MIN_SEATS_PER_ROW = 0;
-int CinemaHall::MAX_SEATS_PER_ROW = 30;
+int Theatre::MIN_NR_ROWS = 0;
+int Theatre::MAX_NR_ROWS = 300;
+int Theatre::MIN_SEATS_PER_ROW = 0;
+int Theatre::MAX_SEATS_PER_ROW = 50;
+int Theatre::MIN_SEATS_VIP = 0;
+int Theatre::MAX_SEATS_VIP = 100;
