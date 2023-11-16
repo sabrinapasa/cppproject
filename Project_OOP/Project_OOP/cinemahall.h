@@ -181,6 +181,67 @@ public:
 
 		return *this;
 	}
+
+	//pre
+	CinemaHall operator++() {
+		this->nrRows += 1;
+		if (this->nrSeats != nullptr) {
+			delete[] this->nrSeats;
+			this->nrSeats = nullptr;
+		}
+		this->nrSeats = new int[this->nrRows];
+		return *this;
+	}
+
+	//post
+	CinemaHall operator++(int) {
+		CinemaHall copy = *this;
+		this->nrRows += 1;
+		if (this->nrSeats != nullptr) {
+			delete[] this->nrSeats;
+			this->nrSeats = nullptr;
+		}
+		this->nrSeats = new int[this->nrRows];
+		return copy;
+	}
+
+	CinemaHall operator+(int value) {
+		this->nrRows += value;
+		if (this->nrSeats != nullptr) {
+			delete[] this->nrSeats;
+			this->nrSeats = nullptr;
+		}
+		this->nrSeats = new int[this->nrRows];
+		return *this;
+	}
+
+	CinemaHall operator-(int value) {
+		this->nrRows -= value;
+		if (this->nrSeats != nullptr) {
+			delete[] this->nrSeats;
+			this->nrSeats = nullptr;
+		}
+		this->nrSeats = new int[this->nrRows];
+		return *this;
+	}
+
+	int operator[](int index) {
+		if (index >= 0 && index < this->nrRows) {
+			return this->nrSeats[index];
+		}
+		else {
+			throw exception ("Ingex out of range");
+		}
+	}
+
+	bool operator!() {
+		bool copy = !this->isAvailable;
+		return copy;
+	}
+
+	explicit operator int() {
+		return this->nrRows;
+	}
 };
 
 int CinemaHall::MIN_NR_ROWS = 0;
