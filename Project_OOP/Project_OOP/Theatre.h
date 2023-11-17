@@ -162,6 +162,37 @@ public:
 		}
 	}
 
+	void readTheatre() {
+		cout << "Theatre address: ";
+		this->isAvailable = false;
+		char address[11];
+		int nrRows;
+		int nrSeatsVIP;
+		cin.getline(address, 11);
+		strcpy_s(this->address, 11, address);
+		cout << "Number of seats VIP: ";
+		cin >> nrSeatsVIP;
+		this->nrSeatsVIP = nrSeatsVIP;
+		cout << "Number of rows: ";
+		cin >> nrRows;
+		if (nrRows <= MIN_NR_ROWS || nrRows > MAX_NR_ROWS)
+			throw new exception("Value out of range!");
+		if (nrRows != this->nrRows && this->nrSeats != nullptr) {
+			delete[] this->nrSeats;
+			this->nrSeats = nullptr;
+		}
+		this->nrRows = nrRows;
+		if (this->nrSeats == nullptr)
+			this->nrSeats = new int[this->nrRows];
+		cout << "Give the seats for each row" << endl;
+		for (int i = 0; i < this->nrRows; i++)
+		{
+			cout << "Row number: " << i + 1;
+			cin >> this->nrSeats[i];
+		}
+		cin.get();
+	}
+
 	Theatre& operator=(const Theatre& t) {
 		if (this == &t)
 			return *this;
@@ -208,6 +239,9 @@ public:
 
 	//pre
 	Theatre operator++() {
+		if (this->nrRows + 1 > MAX_NR_ROWS) {
+			throw new exception("Imposible operation");
+		}
 		this->nrRows += 1;
 		if (this->nrSeats != nullptr) {
 			delete[] this->nrSeats;
@@ -220,6 +254,9 @@ public:
 	//post
 	Theatre operator++(int) {
 		Theatre copy = *this;
+		if (copy.nrRows + 1 > MAX_NR_ROWS) {
+			throw new exception("Imposible operation");
+		}
 		this->nrRows += 1;
 		if (this->nrSeats != nullptr) {
 			delete[] this->nrSeats;
@@ -230,23 +267,41 @@ public:
 	}
 
 	Theatre operator+(int value) {
-		this->nrRows += value;
-		if (this->nrSeats != nullptr) {
-			delete[] this->nrSeats;
-			this->nrSeats = nullptr;
+		Theatre copy = *this;
+		if (copy.nrRows + value > MAX_NR_ROWS) {
+			throw new exception("Imposible operation");
 		}
-		this->nrSeats = new int[this->nrRows];
-		return *this;
+		copy.nrRows += value;
+		if (copy.nrSeats != nullptr) {
+			delete[] copy.nrSeats;
+			copy.nrSeats = nullptr;
+		}
+		copy.nrSeats = new int[copy.nrRows];
+		return copy;
 	}
 
 	Theatre operator-(int value) {
-		this->nrRows -= value;
-		if (this->nrSeats != nullptr) {
-			delete[] this->nrSeats;
-			this->nrSeats = nullptr;
+		Theatre copy = *this;
+		if (value >= copy.nrRows) {
+			throw new exception("The value is too big!");
 		}
-		this->nrSeats = new int[this->nrRows];
-		return *this;
+		if (value == copy.nrRows) {
+			copy.nrRows = 0;
+			if (copy.nrSeats != nullptr) {
+				delete[] copy.nrSeats;
+				copy.nrSeats = nullptr;
+				return copy;
+			}
+		}
+		else {
+			copy.nrRows -= value;
+			if (copy.nrSeats != nullptr) {
+				delete[] copy.nrSeats;
+				copy.nrSeats = nullptr;
+			}
+			copy.nrSeats = new int[copy.nrRows];
+			return copy;
+		}
 	}
 
 	int operator[](int index) {
@@ -266,7 +321,54 @@ public:
 	explicit operator int() {
 		return this->nrRows;
 	}
+
+	friend Theatre operator+(int value, const Theatre& t);
+
+	bool operator==(const Theatre& t) {
+		if (this->isAvailable == t.isAvailable && this->nrRows == t.nrRows && strcmp(this->address, t.address) == 0 && this->nrSeatsVIP == t.nrSeatsVIP) {
+			for (int i = 0; i < this->nrRows; i++)
+				for (int j = 0; j < this->nrRows; j++)
+					if (this->nrSeats[i] == t.nrSeats[j])
+						return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	bool operator>=(const Theatre& t) {
+		if (this->nrRows >= t.nrRows) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 };
+
+Theatre operator+(int value, const Theatre& t) {
+	Theatre copy = t;
+	if (copy.nrRows + value > Theatre::MAX_NR_ROWS) {
+		throw new exception("Imposible operation");
+	}
+	copy.nrRows += value;
+	if (copy.nrSeats != nullptr) {
+		delete[] copy.nrSeats;
+		copy.nrSeats = nullptr;
+	}
+	copy.nrSeats = new int[copy.nrRows];
+	return copy;
+}
+
+ostream& operator<<(ostream& out, const Theatre& t) {
+	t.printTheatre();
+	return out;
+}
+
+istream& operator>>(istream& in, Theatre& t) {
+	t.readTheatre();
+	return in;
+}
 
 int Theatre::MIN_NR_ROWS = 0;
 int Theatre::MAX_NR_ROWS = 300;

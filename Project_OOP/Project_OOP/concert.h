@@ -9,6 +9,7 @@ class Concert {
 	int nrPersons;
 	char name[21];
 	char* address;
+	bool freeEntrance;
 
 	static int MAX_NR_PERSONS;
 	static int MIN_NR_PERSONS;
@@ -19,6 +20,7 @@ public:
 		this->name[0] = '\0';
 		this->nrPersons = 0;
 		this->address = nullptr;
+		this->freeEntrance = false;
 	}
 
 	Concert(const int nrPersons, const char* address) {
@@ -28,9 +30,10 @@ public:
 		this->address = new char[strlen(address)+1];
 		strcpy_s(this->address, strlen(address) + 1, address);
 		this->name[0] = '\0';
+		this->freeEntrance = false;
 	}
 
-	Concert(const int nrPersons, const char* address, const char* name) {
+	Concert(const int nrPersons, const char* address, const char* name, bool freeEntrance) {
 		if (nrPersons < MIN_NR_PERSONS || nrPersons > MAX_NR_PERSONS)
 			throw new exception("Value out of range!");
 		this->nrPersons = nrPersons;
@@ -40,6 +43,15 @@ public:
 			throw new exception("Name too long!");
 		}
 		strcpy_s(this->name, 21, name);
+		this->freeEntrance = freeEntrance;
+	}
+
+	void setFreeEntrance(bool freeEntrance) {
+		this->freeEntrance = freeEntrance;
+	}
+
+	bool getFreeEntrance() {
+		return this->freeEntrance;
 	}
 
 	void setNrPersons(int nrPersons) {
@@ -83,6 +95,7 @@ public:
 	}
 
 	Concert(const Concert& c) {
+		this->freeEntrance = c.freeEntrance;
 		this->nrPersons = c.nrPersons;
 		strcpy_s(this->name, 21, c.name);
 		if (c.address == nullptr)
@@ -119,6 +132,7 @@ public:
 		if (this == &c)
 			return *this;
 
+		this->freeEntrance = c.freeEntrance;
 		this->nrPersons = c.nrPersons;
 		strcpy_s(this->name, 21, c.name);
 
@@ -139,7 +153,102 @@ public:
 		
 		return *this;
 	}
+
+	//pre
+	Concert operator++() {
+		if (this->nrPersons + 1 > MAX_NR_PERSONS) {
+			throw new exception("Imposible operation");
+		}
+		else {
+			this->nrPersons += 1;
+			return *this;
+		}
+	}
+
+	//post
+	Concert operator++(int) {
+		Concert copy = *this;
+		if (this->nrPersons + 1 > MAX_NR_PERSONS) {
+			throw new exception("Imposible operation");
+		}
+		else {
+			this->nrPersons += 1;
+		}
+		return copy;
+	}
+
+	Concert operator+(int value) {
+		Concert copy = *this;
+		if (copy.nrPersons + value > MAX_NR_PERSONS) {
+			throw new exception("Imposible operation");
+		}
+		copy.nrPersons += value;
+		return copy;
+	}
+
+	Concert operator-(int value) {
+		Concert copy = *this;
+		if (value >= copy.nrPersons) {
+			throw new exception("The value is too big!");
+		}
+		else {
+			copy.nrPersons -= value;
+			return copy;
+		}
+	}
+
+	char operator[](int index) {
+		if (index >= 0 && index < strlen(this->address)) {
+			return this->address[index];
+		}
+		else {
+			throw exception("Ingex out of range");
+		}
+	}
+
+	bool operator!() {
+		bool copy = !this->freeEntrance;
+		return copy;
+	}
+
+	explicit operator int() {
+		return this->nrPersons;
+	}
+
+	friend Concert operator+(int value, const Concert& c);
+
+	bool operator==(const Concert& c) {
+		if (this->freeEntrance == c.freeEntrance && this->nrPersons == c.nrPersons && strcmp(this->address, c.address) == 0 && strcmp(this->name, c.name) == 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	bool operator>=(const Concert& c) {
+		if (this->nrPersons >= c.nrPersons) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 };
+
+Concert operator+(int value, const Concert& c) {
+	Concert copy = c;
+	if (copy.nrPersons + value > Concert::MAX_NR_PERSONS) {
+		throw new exception("Imposible operation");
+	}
+	copy.nrPersons += value;
+	return copy;
+}
+
+ostream& operator<<(ostream& out, const Concert& c) {
+	c.printConcert();
+	return out;
+}
 
 int Concert::MAX_NR_PERSONS = 1000;
 int Concert::MIN_NR_PERSONS = 0;

@@ -139,6 +139,33 @@ public:
 		}
 	}
 
+	void readCinemaHall() {
+		cout << "Hall name: ";
+		this->isAvailable = false;
+		char name[11];
+		int nrRows;
+		cin.getline(name, 11);
+		strcpy_s(this->name, 11, name);
+		cout << "Number of rows: ";
+		cin >> nrRows;
+		if (nrRows <= MIN_NR_ROWS || nrRows > MAX_NR_ROWS)
+			throw new exception("Value out of range!");
+		if (nrRows != this->nrRows && this->nrSeats != nullptr) {
+			delete[] this->nrSeats;
+			this->nrSeats = nullptr;
+		}
+		this->nrRows = nrRows;
+		if (this->nrSeats == nullptr)
+			this->nrSeats = new int[this->nrRows];
+		cout << "Give the seats for each row" << endl;
+		for (int i = 0; i < this->nrRows; i++)
+		{
+			cout << "Row number: " << i + 1;
+			cin >> this->nrSeats[i];
+		}
+		cin.get();
+	}
+
 	CinemaHall& operator=(const CinemaHall& c) {
 		if (this == &c)
 			return *this;
@@ -184,6 +211,9 @@ public:
 
 	//pre
 	CinemaHall operator++() {
+		if (this->nrRows + 1 > MAX_NR_ROWS) {
+			throw new exception("Imposible operation");
+		}
 		this->nrRows += 1;
 		if (this->nrSeats != nullptr) {
 			delete[] this->nrSeats;
@@ -196,6 +226,9 @@ public:
 	//post
 	CinemaHall operator++(int) {
 		CinemaHall copy = *this;
+		if (copy.nrRows + 1 > MAX_NR_ROWS) {
+			throw new exception("Imposible operation");
+		}
 		this->nrRows += 1;
 		if (this->nrSeats != nullptr) {
 			delete[] this->nrSeats;
@@ -206,23 +239,41 @@ public:
 	}
 
 	CinemaHall operator+(int value) {
-		this->nrRows += value;
-		if (this->nrSeats != nullptr) {
-			delete[] this->nrSeats;
-			this->nrSeats = nullptr;
+		CinemaHall copy = *this;
+		if (copy.nrRows + value > MAX_NR_ROWS) {
+			throw new exception("Imposible operation");
 		}
-		this->nrSeats = new int[this->nrRows];
-		return *this;
+		copy.nrRows += value;
+		if (copy.nrSeats != nullptr) {
+			delete[] copy.nrSeats;
+			copy.nrSeats = nullptr;
+		}
+		copy.nrSeats = new int[copy.nrRows];
+		return copy;
 	}
 
 	CinemaHall operator-(int value) {
-		this->nrRows -= value;
-		if (this->nrSeats != nullptr) {
-			delete[] this->nrSeats;
-			this->nrSeats = nullptr;
+		CinemaHall copy = *this;
+		if (value >= copy.nrRows) {
+			throw new exception("The value is too big!");
 		}
-		this->nrSeats = new int[this->nrRows];
-		return *this;
+		if (value == copy.nrRows) {
+			copy.nrRows = 0;
+			if (copy.nrSeats != nullptr) {
+				delete[] copy.nrSeats;
+				copy.nrSeats = nullptr;
+				return copy;
+			}
+		}
+		else {
+		copy.nrRows -= value;
+		if (copy.nrSeats != nullptr) {
+			delete[] copy.nrSeats;
+			copy.nrSeats = nullptr;
+		}
+		copy.nrSeats = new int[copy.nrRows];
+		return copy;
+		}
 	}
 
 	int operator[](int index) {
@@ -242,7 +293,79 @@ public:
 	explicit operator int() {
 		return this->nrRows;
 	}
+
+	friend CinemaHall operator+(int value, const CinemaHall& c);
+	//friend CinemaHall operator-(int value, const CinemaHall& c);
+
+	bool operator==(const CinemaHall& c) {
+		if (this->isAvailable == c.isAvailable && this->nrRows == c.nrRows && strcmp(this->name, c.name) == 0) {
+			for (int i = 0; i < this->nrRows; i++)
+				for (int j = 0; j < this->nrRows; j++)
+					if (this->nrSeats[i] == c.nrSeats[j])
+						return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	bool operator>=(const CinemaHall& c) {
+		if (this->nrRows >= c.nrRows){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 };
+
+CinemaHall operator+(int value, const CinemaHall& c) {
+	CinemaHall copy = c;
+	if (copy.nrRows + value > CinemaHall::MAX_NR_ROWS) {
+		throw new exception("Imposible operation");
+	}
+	copy.nrRows += value;
+	if (copy.nrSeats != nullptr) {
+		delete[] copy.nrSeats;
+		copy.nrSeats = nullptr;
+	}
+	copy.nrSeats = new int[copy.nrRows];
+	return copy;
+}
+
+//CinemaHall operator-(int value, const CinemaHall& c) {
+//	CinemaHall copy = c;
+//	if (value <= copy.nrRows) {
+//		throw new exception("The value is too small!");
+//	}
+//	if (copy.nrRows == value) {
+//		copy.nrRows = 0;
+//		if (copy.nrSeats != nullptr) {
+//			delete[] copy.nrSeats;
+//			copy.nrSeats = nullptr;
+//			return copy;
+//		}
+//	}
+//	else {
+//		value -= copy.nrRows;
+//		if (copy.nrSeats != nullptr) {
+//			delete[] copy.nrSeats;
+//			copy.nrSeats = nullptr;
+//		}
+//		copy.nrSeats = new int[value];
+//		return copy;
+//	}
+//}
+
+ostream& operator<<(ostream& out, const CinemaHall& c) {
+	c.printCinemaHall();
+	return out;
+}
+
+istream& operator>>(istream& in, CinemaHall& c) {
+	c.readCinemaHall();
+	return in;
+}
 
 int CinemaHall::MIN_NR_ROWS = 0;
 int CinemaHall::MAX_NR_ROWS = 30;
