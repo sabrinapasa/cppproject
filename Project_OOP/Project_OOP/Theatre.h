@@ -304,7 +304,7 @@ public:
 		}
 	}
 
-	int operator[](int index) {
+	int& operator[](int index) {
 		if (index >= 0 && index < this->nrRows) {
 			return this->nrSeats[index];
 		}
@@ -323,6 +323,7 @@ public:
 	}
 
 	friend Theatre operator+(int value, const Theatre& t);
+	friend Theatre operator-(int value, const Theatre& t);
 
 	bool operator==(const Theatre& t) {
 		if (this->isAvailable == t.isAvailable && this->nrRows == t.nrRows && strcmp(this->address, t.address) == 0 && this->nrSeatsVIP == t.nrSeatsVIP) {
@@ -358,6 +359,31 @@ Theatre operator+(int value, const Theatre& t) {
 	}
 	copy.nrSeats = new int[copy.nrRows];
 	return copy;
+}
+
+Theatre operator-(int value, const Theatre& t) {
+	Theatre copy = t;
+	if (value <= copy.nrRows) {
+		throw new exception("The value is too small!");
+	}
+	if (copy.nrRows == value) {
+		copy.nrRows = 0;
+		if (copy.nrSeats != nullptr) {
+			delete[] copy.nrSeats;
+			copy.nrSeats = nullptr;
+			return copy;
+		}
+	}
+	else {
+		value -= copy.nrRows;
+		copy.nrRows = value;
+		if (copy.nrSeats != nullptr) {
+			delete[] copy.nrSeats;
+			copy.nrSeats = nullptr;
+		}
+		copy.nrSeats = new int[copy.nrRows];
+		return copy;
+	}
 }
 
 ostream& operator<<(ostream& out, const Theatre& t) {

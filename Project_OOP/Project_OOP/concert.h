@@ -87,6 +87,7 @@ public:
 	char* getName() {
 		char* copy = new char[strlen(this->name)+1];
 		strcpy_s(copy, 21, this->name);
+		return copy;
 	}
 
 	~Concert() {
@@ -126,6 +127,30 @@ public:
 			for (int i = 0; i < strlen(this->address); i++)
 				cout << this->address[i];
 		}
+	}
+
+	void readConcert() {
+		cout << "Concert name: ";
+		this->freeEntrance = false;
+		char name[21];
+		int nrPersons;
+		cin.getline(name, 21);
+		strcpy_s(this->name, 21, name);
+		cout << "Number of persons: ";
+		cin >> nrPersons;
+		cin.get();
+		if (nrPersons <= MIN_NR_PERSONS || nrPersons > MAX_NR_PERSONS)
+			throw new exception("Value out of range!");
+		this->nrPersons = nrPersons;
+		if (this->address != nullptr) {
+			delete[] this->address;
+			this->address = nullptr;
+		}
+		cout << "Address : ";
+		char address[100];
+		cin.getline(address, 100);
+		this->address = new char[strlen(address) + 1];
+		strcpy_s(this->address, strlen(address) + 1, address);
 	}
 
 	Concert& operator=(const Concert& c) {
@@ -197,7 +222,7 @@ public:
 		}
 	}
 
-	char operator[](int index) {
+	char& operator[](int index) {
 		if (index >= 0 && index < strlen(this->address)) {
 			return this->address[index];
 		}
@@ -216,6 +241,7 @@ public:
 	}
 
 	friend Concert operator+(int value, const Concert& c);
+	friend Concert operator-(int value, const Concert& c);
 
 	bool operator==(const Concert& c) {
 		if (this->freeEntrance == c.freeEntrance && this->nrPersons == c.nrPersons && strcmp(this->address, c.address) == 0 && strcmp(this->name, c.name) == 0) {
@@ -245,10 +271,32 @@ Concert operator+(int value, const Concert& c) {
 	return copy;
 }
 
+Concert operator-(int value, const Concert& c) {
+	Concert copy = c;
+	if (value <= copy.nrPersons) {
+		throw new exception("The value is too small!");
+	}
+	if (copy.nrPersons == value) {
+		copy.nrPersons = 0;
+		return copy;
+	}
+	else {
+		value -= copy.nrPersons;
+		copy.nrPersons = value;
+		return copy;
+	}
+}
+
 ostream& operator<<(ostream& out, const Concert& c) {
 	c.printConcert();
 	return out;
 }
+
+istream& operator>>(istream& in, Concert& c) {
+	c.readConcert();
+	return in;
+}
+
 
 int Concert::MAX_NR_PERSONS = 1000;
 int Concert::MIN_NR_PERSONS = 0;

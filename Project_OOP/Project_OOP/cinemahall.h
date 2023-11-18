@@ -276,7 +276,7 @@ public:
 		}
 	}
 
-	int operator[](int index) {
+	int& operator[](int index) {
 		if (index >= 0 && index < this->nrRows) {
 			return this->nrSeats[index];
 		}
@@ -295,7 +295,7 @@ public:
 	}
 
 	friend CinemaHall operator+(int value, const CinemaHall& c);
-	//friend CinemaHall operator-(int value, const CinemaHall& c);
+	friend CinemaHall operator-(int value, const CinemaHall& c);
 
 	bool operator==(const CinemaHall& c) {
 		if (this->isAvailable == c.isAvailable && this->nrRows == c.nrRows && strcmp(this->name, c.name) == 0) {
@@ -333,29 +333,30 @@ CinemaHall operator+(int value, const CinemaHall& c) {
 	return copy;
 }
 
-//CinemaHall operator-(int value, const CinemaHall& c) {
-//	CinemaHall copy = c;
-//	if (value <= copy.nrRows) {
-//		throw new exception("The value is too small!");
-//	}
-//	if (copy.nrRows == value) {
-//		copy.nrRows = 0;
-//		if (copy.nrSeats != nullptr) {
-//			delete[] copy.nrSeats;
-//			copy.nrSeats = nullptr;
-//			return copy;
-//		}
-//	}
-//	else {
-//		value -= copy.nrRows;
-//		if (copy.nrSeats != nullptr) {
-//			delete[] copy.nrSeats;
-//			copy.nrSeats = nullptr;
-//		}
-//		copy.nrSeats = new int[value];
-//		return copy;
-//	}
-//}
+CinemaHall operator-(int value, const CinemaHall& c) {
+	CinemaHall copy = c;
+	if (value <= copy.nrRows) {
+		throw new exception("The value is too small!");
+	}
+	if (copy.nrRows == value) {
+		copy.nrRows = 0;
+		if (copy.nrSeats != nullptr) {
+			delete[] copy.nrSeats;
+			copy.nrSeats = nullptr;
+			return copy;
+		}
+	}
+	else {
+		value -= copy.nrRows;
+		copy.nrRows = value;
+		if (copy.nrSeats != nullptr) {
+			delete[] copy.nrSeats;
+			copy.nrSeats = nullptr;
+		}
+		copy.nrSeats = new int[copy.nrRows];
+		return copy;
+	}
+}
 
 ostream& operator<<(ostream& out, const CinemaHall& c) {
 	c.printCinemaHall();
