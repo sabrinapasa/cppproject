@@ -11,10 +11,10 @@ class Concert {
 	char* address;
 	bool freeEntrance;
 
+public:
+
 	static int MAX_NR_PERSONS;
 	static int MIN_NR_PERSONS;
-
-public:
 
 	Concert() {
 		this->name[0] = '\0';
@@ -123,9 +123,7 @@ public:
 		if (this->address == nullptr)
 			cout << "The address is unknown";
 		else {
-			cout << "The address is: ";
-			for (int i = 0; i < strlen(this->address); i++)
-				cout << this->address[i];
+			cout << "The address is: " << this->address;
 		}
 	}
 

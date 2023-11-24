@@ -141,7 +141,7 @@ int main() {
 	Concert newConcert;
 	cin >> newConcert;*/
 
-	Stadium s1(2, "Ghencea nr. 30");
+	/*Stadium s1(2, "Ghencea nr. 30");
 	Stadium s2 = s1;
 	cout << s2;
 	cout << endl;
@@ -170,6 +170,13 @@ int main() {
 	Stadium s5;
 	s5 = s4 - 2;
 	cout << s5;
-	
+	cout << endl << !s5;
+	Stadium s6;
+	s6 = s3++;
+	cout << endl << s6;
+	Stadium s7;
+	s7 = ++s4;
+	cout << endl << s7;*/
+
 	return 0;
 }

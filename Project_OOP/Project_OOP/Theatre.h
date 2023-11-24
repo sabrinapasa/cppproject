@@ -12,6 +12,8 @@ class Theatre {
 	int nrSeatsVIP;
 	bool isAvailable;
 
+public:
+	
 	static int  MIN_NR_ROWS;
 	static int  MAX_NR_ROWS;
 	static int MIN_SEATS_PER_ROW;
@@ -19,8 +21,6 @@ class Theatre {
 	static int MIN_SEATS_VIP;
 	static int MAX_SEATS_VIP;
 
-public:
-	
 	Theatre() {
 		this->isAvailable = false;
 		this->address[0] = '\0';

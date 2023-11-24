@@ -11,13 +11,13 @@ class CinemaHall {
 	int* nrSeats;
 	bool isAvailable;
 
+public:
+	
 	static int  MIN_NR_ROWS;
 	static int  MAX_NR_ROWS;
 	static int MIN_SEATS_PER_ROW;
 	static int MAX_SEATS_PER_ROW;
 
-public:
-	
 	CinemaHall() {
 		this->isAvailable = false;
 		this->name[0] = '\0';

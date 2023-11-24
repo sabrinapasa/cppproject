@@ -21,6 +21,8 @@ class Stadium {
 	Sector sector[200];
 	int nrSectors;
 
+public:
+
 	static int MAX_NR_SEATS;
 	static int MIN_NR_SEATS;
 	static int MAX_NR_SEATS_PER_ROW;
@@ -32,7 +34,6 @@ class Stadium {
 	static int MAX_NR_RINGS;
 	static int MIN_NR_RINGS;
 
-public:
 	Stadium() {
 		this->name[0] = '\0';
 		this->address = nullptr;
@@ -407,8 +408,45 @@ public:
 		return this->getTotalSeats();
 	}
 
+	//pre
+	Stadium operator++() {
+		if (this->nrSectors + 1 > MAX_NR_SECTORS) {
+			throw new exception("Imposible operation");
+		}
+		else {
+			this->nrSectors += 1;
+			for (int i = this->nrSectors-1; i < this->nrSectors; i++) {
+				(*this)[i].name = "NA";
+			}
+			return *this;
+		}
+	}
+
+	//post
+	Stadium operator++(int) {
+		Stadium copy = *this;
+		if (this->nrSectors + 1 > MAX_NR_SECTORS) {
+			throw new exception("Imposible operation");
+		}
+		else {
+			this->nrSectors += 1;
+			for (int i = copy.nrSectors; i < this->nrSectors; i++) {
+				(*this)[i].name = "NA";
+			}
+		}
+		return copy;
+	}
+
+	bool operator!() {
+		bool copy = !this->isAvailable;
+		return copy;
+	}
+
 	Stadium operator+(int value) {
 		Stadium copy = *this;
+		if (copy.nrSectors + value > MAX_NR_SECTORS) {
+			throw new exception("Imposible operation");
+		}
 		copy.nrSectors += value;
 		for (int i = this->nrSectors; i < copy.nrSectors; i++) {
 			copy[i].name = "NA";
@@ -431,7 +469,21 @@ public:
 		copy.nrSectors--;
 		return copy;
 	}
+
+	friend Stadium operator+(int value, const Stadium& s);
 };
+
+Stadium operator+(int value, const Stadium& s) {
+	Stadium copy = s;
+	if (copy.nrSectors + value > Stadium::MAX_NR_SECTORS) {
+		throw new exception("Imposible operation");
+	}
+	copy.nrSectors += value;
+	for (int i = s.nrSectors; i < copy.nrSectors; i++) {
+		copy[i].name = "NA";
+	}
+	return copy;
+}
 
 ostream& operator<<(ostream& out, const Stadium& s) {
 	s.printStadium();
