@@ -10,8 +10,13 @@ int main() {
 	//CinemaHall cinema;
 	//cinema.printCinemaHall();
 	//cout << endl;
-	int seats[] = { 3, 4, 5, 8 };
+	int seats[] = {3, 4, 5, 8};
 	/*CinemaHall c1(4, seats);
+	cout << c1.sum();
+	cout << endl;
+	cout << c1.min();
+	cout << endl;
+	cout << c1.max();
 	cout << c1[2] << endl;
 	cout << !c1;
 	int val = (int)c1;
@@ -56,6 +61,9 @@ int main() {
 
 
 	/*Theatre t1(4, seats, 50);
+	cout << t1.sum();
+	cout << endl << t1.min();
+	cout << endl << t1.max();
 	Theatre t2;
 	t2 = t1;
 	t2.printTheatre();
@@ -138,8 +146,11 @@ int main() {
 	cout << endl << concert2;
 	concert8 = 500 - concert2;
 	cout << endl << concert8;
-	Concert newConcert;
-	cin >> newConcert;*/
+	//Concert newConcert;
+	//cin >> newConcert;
+	cout << endl;
+	bool free = concert1.assessFreeEntrance();
+	cout << endl << free;*/
 
 	/*Stadium s1(2, "Ghencea nr. 30");
 	Stadium s2 = s1;
@@ -176,7 +187,9 @@ int main() {
 	cout << endl << s6;
 	Stadium s7;
 	s7 = ++s4;
-	cout << endl << s7;*/
+	cout << endl << s7;
+	int value = (int)s3;
+	cout << endl << value;*/
 
 	return 0;
 }

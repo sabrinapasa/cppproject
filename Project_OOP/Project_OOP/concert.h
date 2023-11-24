@@ -151,6 +151,13 @@ public:
 		strcpy_s(this->address, strlen(address) + 1, address);
 	}
 
+	bool assessFreeEntrance() {
+		if (this->nrPersons > MAX_NR_PERSONS / 2)
+			return false;
+		else
+			return true;
+	}
+
 	Concert& operator=(const Concert& c) {
 		if (this == &c)
 			return *this;

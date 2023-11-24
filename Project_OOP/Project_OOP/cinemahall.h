@@ -139,6 +139,44 @@ public:
 		}
 	}
 
+	int sum() {
+		if (this->nrRows == 0)
+			return 0;
+		if (this->nrSeats == nullptr)
+			return 0;
+		int sum = 0;
+		for (int i = 0; i < this->nrRows; i++) {
+			sum += this->nrSeats[i];
+		}
+		return sum;
+	}
+
+	int min() {
+		if (this->nrRows == 0)
+			return 0;
+		if (this->nrSeats == nullptr)
+			return 0;
+		int min = MAX_SEATS_PER_ROW;
+		for (int i = 0; i < this->nrRows; i++) {
+			if (this->nrSeats[i] < min)
+				min = this->nrSeats[i];
+		}
+		return min;
+	}
+
+	int max() {
+		if (this->nrRows == 0)
+			return 0;
+		if (this->nrSeats == nullptr)
+			return 0;
+		int max = MIN_SEATS_PER_ROW;
+		for (int i = 0; i < this->nrRows; i++) {
+			if (this->nrSeats[i] > max)
+				max = this->nrSeats[i];
+		}
+		return max;
+	}
+
 	void readCinemaHall() {
 		cout << "Hall name: ";
 		this->isAvailable = false;
