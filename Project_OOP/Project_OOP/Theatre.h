@@ -277,16 +277,21 @@ public:
 	}
 
 	//pre
-	Theatre operator++() {
+	Theatre& operator++() {
 		if (this->nrRows + 1 > MAX_NR_ROWS) {
 			throw new exception("Imposible operation");
 		}
-		this->nrRows += 1;
+		int* copy = new int[this->nrRows + 1];
+		for (int i = 0; i < this->nrRows; i++) {
+			copy[i] = this->nrSeats[i];
+		}
+		copy[this->nrRows] = 10;
 		if (this->nrSeats != nullptr) {
 			delete[] this->nrSeats;
 			this->nrSeats = nullptr;
 		}
-		this->nrSeats = new int[this->nrRows];
+		this->nrSeats = copy;
+		this->nrRows += 1;
 		return *this;
 	}
 
@@ -296,12 +301,17 @@ public:
 		if (copy.nrRows + 1 > MAX_NR_ROWS) {
 			throw new exception("Imposible operation");
 		}
-		this->nrRows += 1;
+		int* copyRows = new int[this->nrRows + 1];
+		for (int i = 0; i < this->nrRows; i++) {
+			copyRows[i] = this->nrSeats[i];
+		}
+		copyRows[this->nrRows] = 10;
 		if (this->nrSeats != nullptr) {
 			delete[] this->nrSeats;
 			this->nrSeats = nullptr;
 		}
-		this->nrSeats = new int[this->nrRows];
+		this->nrSeats = copyRows;
+		this->nrRows += 1;
 		return copy;
 	}
 
@@ -310,12 +320,19 @@ public:
 		if (copy.nrRows + value > MAX_NR_ROWS) {
 			throw new exception("Imposible operation");
 		}
-		copy.nrRows += value;
+		int* copyRows = new int[this->nrRows + value];
+		for (int i = 0; i < this->nrRows; i++) {
+			copyRows[i] = this->nrSeats[i];
+		}
+		for (int i = this->nrRows; i < this->nrRows + value; i++) {
+			copyRows[i] = 10;
+		}
 		if (copy.nrSeats != nullptr) {
 			delete[] copy.nrSeats;
 			copy.nrSeats = nullptr;
 		}
-		copy.nrSeats = new int[copy.nrRows];
+		copy.nrSeats = copyRows;
+		copy.nrRows += value;
 		return copy;
 	}
 
@@ -333,12 +350,16 @@ public:
 			}
 		}
 		else {
-			copy.nrRows -= value;
+			int* copyRows = new int[this->nrRows - value];
+			for (int i = 0; i < this->nrRows - value; i++) {
+				copyRows[i] = this->nrSeats[i];
+			}
 			if (copy.nrSeats != nullptr) {
 				delete[] copy.nrSeats;
 				copy.nrSeats = nullptr;
 			}
-			copy.nrSeats = new int[copy.nrRows];
+			copy.nrSeats = copyRows;
+			copy.nrRows -= value;
 			return copy;
 		}
 	}
@@ -362,7 +383,6 @@ public:
 	}
 
 	friend Theatre operator+(int value, const Theatre& t);
-	friend Theatre operator-(int value, const Theatre& t);
 
 	bool operator==(const Theatre& t) {
 		if (this->isAvailable == t.isAvailable && this->nrRows == t.nrRows && strcmp(this->address, t.address) == 0 && this->nrSeatsVIP == t.nrSeatsVIP) {
@@ -386,43 +406,26 @@ public:
 	}
 };
 
-Theatre operator+(int value, const Theatre& t) {
-	Theatre copy = t;
-	if (copy.nrRows + value > Theatre::MAX_NR_ROWS) {
+Theatre operator+(int value, const Theatre& c) {
+	Theatre copy = c;
+	if (copy.nrRows + value > CinemaHall::MAX_NR_ROWS) {
 		throw new exception("Imposible operation");
 	}
-	copy.nrRows += value;
+	int* copyRows = new int[c.nrRows + value];
+	for (int i = 0; i < c.nrRows; i++) {
+		copyRows[i] = c.nrSeats[i];
+	}
+	for (int i = c.nrRows; i < c.nrRows + value; i++) {
+		copyRows[i] = 10;
+	}
+
 	if (copy.nrSeats != nullptr) {
 		delete[] copy.nrSeats;
 		copy.nrSeats = nullptr;
 	}
-	copy.nrSeats = new int[copy.nrRows];
+	copy.nrSeats = copyRows;
+	copy.nrRows += value;
 	return copy;
-}
-
-Theatre operator-(int value, const Theatre& t) {
-	Theatre copy = t;
-	if (value <= copy.nrRows) {
-		throw new exception("The value is too small!");
-	}
-	if (copy.nrRows == value) {
-		copy.nrRows = 0;
-		if (copy.nrSeats != nullptr) {
-			delete[] copy.nrSeats;
-			copy.nrSeats = nullptr;
-			return copy;
-		}
-	}
-	else {
-		value -= copy.nrRows;
-		copy.nrRows = value;
-		if (copy.nrSeats != nullptr) {
-			delete[] copy.nrSeats;
-			copy.nrSeats = nullptr;
-		}
-		copy.nrSeats = new int[copy.nrRows];
-		return copy;
-	}
 }
 
 ostream& operator<<(ostream& out, const Theatre& t) {

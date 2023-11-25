@@ -39,15 +39,18 @@ int main() {
 		cout << endl << "The first cinema is not bigger or equal to the second one";
 	}
 
-	CinemaHall c3 = ++c1;
-	CinemaHall c4 = c1++;
+	CinemaHall c3;
+	c3 = ++c1;
+	cout << endl<< c3;
+	CinemaHall c4;
+	c4= c1++;
+	cout << endl<< c4;
 	CinemaHall c5;
 	CinemaHall c6;
 	CinemaHall c7;
 	c6 = c5 + 3;
-	//c7 = c2 - 2;
+	c7 = c2 - 2;
 	//c6 = 3 + c5;
-	c7 = 10 - c2;
 	cout << endl<< c6;
 	//c6.printCinemaHall();
 	cout << endl << c7;
@@ -82,8 +85,6 @@ int main() {
 	t6 = 3 + t5;
 	cout << t6 << endl;
 	t7 = t2 - 2;
-	cout << t7 << endl;
-	t7 = 10 - t2;
 	cout << t7 << endl;
 	cout << endl;
 	if (t2 == t1)
