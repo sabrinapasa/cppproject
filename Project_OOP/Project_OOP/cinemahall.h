@@ -1,4 +1,5 @@
 #pragma once
+#include"FILES.h"
 #include<iostream>
 #include<string>
 #include<cstring>
@@ -10,6 +11,7 @@ class CinemaHall {
 	char name[11];
 	int* nrSeats;
 	bool isAvailable;
+	int idP;
 
 public:
 	
@@ -17,12 +19,15 @@ public:
 	static int  MAX_NR_ROWS;
 	static int MIN_SEATS_PER_ROW;
 	static int MAX_SEATS_PER_ROW;
+	static int id;
 
 	CinemaHall() {
 		this->isAvailable = false;
 		this->name[0] = '\0';
 		this->nrRows = 0;
 		this->nrSeats = nullptr;
+		this->id++;
+		this->idP = this->id;
 	}
 
 	CinemaHall(const int nrRows,const int* nrSeats) {
@@ -34,6 +39,8 @@ public:
 			this->nrSeats[i] = nrSeats[i];
 		this->isAvailable = false;
 		this->name[0] = '\0';
+		this->id++;
+		this->idP = this->id;
 	}
 
 	CinemaHall(const int nrRows, const int* nrSeats, const char* name) {
@@ -48,6 +55,8 @@ public:
 			throw new exception("Name too long!");
 		}
 		strcpy_s(this->name, 11, name);
+		this->id++;
+		this->idP = this->id;
 	}
 
 	void setAvailability(bool isAvailable) {
@@ -120,10 +129,13 @@ public:
 			for (int i = 0; i < c.nrRows; i++)
 				this->nrSeats[i] = c.nrSeats[i]; 
 		}
+		this->id++;
+		this->idP = this->id;
 	}
 
 	void printCinemaHall() const{
-		cout << "Name: ";
+		cout << "Id : " << this->id;
+		cout << endl << "Name: ";
 		if (this->name[0] == 0)
 			cout << "No name";
 		else
@@ -178,6 +190,7 @@ public:
 	}
 
 	void readCinemaHall() {
+		this->id--;
 		cout << "Hall name: ";
 		this->isAvailable = false;
 		char name[11];
@@ -202,6 +215,8 @@ public:
 			cin >> this->nrSeats[i];
 		}
 		cin.get();
+		this->id++;
+		this->idP = this->id;
 	}
 
 	CinemaHall& operator=(const CinemaHall& c) {
@@ -243,7 +258,7 @@ public:
 			this->nrSeats[i] = c.nrSeats[i];
 
 		this->nrRows = c.nrRows;
-
+	
 		return *this;
 	}
 
@@ -375,6 +390,9 @@ public:
 			return false;
 		}
 	}
+
+	friend void writeCinemaToFile(const CinemaHall& c);
+	friend CinemaHall readCinemaFromFile(string fname, int id);
 };
 
 CinemaHall operator+(int value, const CinemaHall& c) {
@@ -413,3 +431,73 @@ int CinemaHall::MIN_NR_ROWS = 0;
 int CinemaHall::MAX_NR_ROWS = 30;
 int CinemaHall::MIN_SEATS_PER_ROW = 0;
 int CinemaHall::MAX_SEATS_PER_ROW = 30;
+int CinemaHall::id = setId("Places.bin");
+
+void writeCinemaToFile(const CinemaHall& c) {
+	fstream f("Places.bin", ios::binary | ios::in | ios::ate);
+	if (!f) {
+		throw exception("No file");
+	}
+	typeP Place = Cinema_Hall_;
+	int TotalSize = (c.nrRows + 2) * sizeof(int) + sizeof(char) * 11 + sizeof(bool) + sizeof(typeP);
+	f.write((char*)&TotalSize, sizeof(int));
+	f.write((char*)&Place, sizeof(typeP));
+	f.write((char*)&c.idP, sizeof(int));
+	f.write(c.name, sizeof(char) * 11);
+	f.write((char*)&c.nrRows, sizeof(int));
+	for (int i = 0; i < c.nrRows; i++) {
+		f.write((char*)&c.nrSeats[i], sizeof(int));
+	}
+	f.write((char*)&c.isAvailable, sizeof(bool));
+
+	f.seekg(ios::beg);
+	int value;
+	f.read((char*)&value, sizeof(int));
+	value++;
+	f.seekp(0,ios::beg);
+	f.write((char*)&value, sizeof(int));
+
+	f.close();
+}
+
+void createCinema() {
+	CinemaHall c;
+	cin >> c;
+	writeCinemaToFile(c);
+}
+
+CinemaHall readCinemaFromFile(string fname,int id) {
+	fstream f(fname.c_str(), ios::binary | ios::in | ios::ate);
+	if (!f) {
+		throw exception("No file");
+	}
+	CinemaHall c;
+	int value;
+	f.read((char*)&value, sizeof(int));
+	for (int i = 1; i < value; i++) {
+		int totalSize;
+		f.read((char*)&totalSize, sizeof(int));
+		typeP place;
+		f.read((char*)&place, sizeof(typeP));
+		if (place != Cinema_Hall_) {
+			f.seekg(totalSize - sizeof(int) - sizeof(typeP), ios::cur);
+			continue;
+		}
+		int idP;
+		f.read((char*)&idP, sizeof(int));
+		if (idP != id) {
+			f.seekg(totalSize - sizeof(int) - sizeof(typeP) - sizeof(int), ios::cur);
+			continue;
+		}
+		f.read(c.name, sizeof(char) * 11);
+		f.read((char*)&c.nrRows, sizeof(int));
+		c.nrSeats = new int[c.nrRows];
+		for (int i = 0; i < c.nrRows; i++) {
+			f.read((char*)&c.nrSeats[i], sizeof(int));
+		}
+		f.read((char*)&c.isAvailable, sizeof(bool));
+		break;
+	}
+	f.close();
+	return c;
+}

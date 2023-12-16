@@ -1,4 +1,5 @@
 #pragma once
+#include"FILES.h"
 #include<iostream>
 #include<string>
 #include<cstring>
@@ -6,7 +7,7 @@
 using namespace std;
 
 struct Sector{
-	string name;
+	int name;
 	int nrRows;
 	int nrSeatsPerRow;
 	int ring;
@@ -20,6 +21,7 @@ class Stadium {
 	bool isAvailable;
 	Sector sector[200];
 	int nrSectors;
+	int idP;
 
 public:
 
@@ -33,12 +35,15 @@ public:
 	static int MIN_NR_ROWS;
 	static int MAX_NR_RINGS;
 	static int MIN_NR_RINGS;
+	static int id;
 
 	Stadium() {
 		this->name[0] = '\0';
 		this->address = nullptr;
 		this->isAvailable = false;
 		this->nrSectors = 0;
+		this->id++;
+		this->idP = this->id;
 	}
 
 	Stadium(const int nrSectors, const char* address) {
@@ -46,12 +51,14 @@ public:
 			throw new exception("Value out of range!");
 		this->nrSectors = nrSectors;
 		for (int i = 0; i < this->nrSectors; i++) {
-			(*this)[i].name = "NA";
+			(*this)[i].name = 0;
 		}
 		this->address = new char[strlen(address) + 1];
 		strcpy_s(this->address, strlen(address) + 1, address);
 		this->name[0] = '\0';
 		this->isAvailable = false;
+		this->id++;
+		this->idP = this->id;
 	}
 
 	Stadium(const int nrSectors, const char* address, const char* name, bool isAvailable,const Sector* sector) {
@@ -70,6 +77,8 @@ public:
 		for (int i = 0; i < this->nrSectors; i++) {
 			this->sector[i] = sector[i];
 		}
+		this->id++;
+		this->idP = this->id;
 	}
 
 	~Stadium() {
@@ -144,7 +153,7 @@ public:
 		}
 	}
 
-	void setSector(int SectorNr, int ring, string name, int nrRows, int nrSeatsPerRow, bool isAvailable){
+	void setSector(int SectorNr, int ring, int name, int nrRows, int nrSeatsPerRow, bool isAvailable){
 		this->setSectorNrRows(SectorNr, nrRows);
 		this->setSectorIsAvailable(SectorNr, isAvailable);
 		this->setSectorNrSeatsPerRow(SectorNr, nrSeatsPerRow);
@@ -225,11 +234,14 @@ public:
 		return (*this)[SectorNr].isAvailable;
 	}
 
-	void setSectorName(int SectorNr, string name) {
+	void setSectorName(int SectorNr, int name) {
 		if (SectorNr < MIN_NR_SECTORS || SectorNr > MAX_NR_SECTORS) {
 			throw new exception("Value out of range!");
 		}
 		if (SectorNr >= this->nrSectors) {
+			throw new exception("Value out of range!");
+		}
+		if (name < 0) {
 			throw new exception("Value out of range!");
 		}
 		else {
@@ -237,7 +249,7 @@ public:
 		}
 	}
 
-	string getSectorName(int SectorNr) {
+	int getSectorName(int SectorNr) {
 		return (*this)[SectorNr].name;
 	}
 
@@ -255,10 +267,13 @@ public:
 		for (int i = 0; i < this->nrSectors; i++) {
 			this->sector[i] = s.sector[i];
 		}
+		this->id++;
+		this->idP = this->id;
 	}
 
 	void printStadium() const {
-		cout << "Name : " << this->name;
+		cout << "Id : " << this->id;
+		cout << endl << "Name : " << this->name;
 		cout << endl << "Address : " << this->address;
 		cout << endl << "Number of sectors : " << this->nrSectors;
 		for (int i = 0; i < this->nrSectors; i++) {
@@ -270,6 +285,7 @@ public:
 	}
 
 	void readStadium() {
+		this->id--;
 		this->isAvailable = false;
 		cout << "Name : ";
 		char name[31];
@@ -294,7 +310,7 @@ public:
 		else {
 			throw new exception("Invalid input");
 		}
-		string s_name;
+		int s_name;
 		int ring;
 		int nrRows;
 		int nrSeatsPerRow;
@@ -328,6 +344,8 @@ public:
 				throw new exception("Invalid input");
 			}
 		}
+		this->id++;
+		this->idP = this->id;
 	}
 
 	Stadium& operator=(const Stadium& s) {
@@ -416,7 +434,7 @@ public:
 		else {
 			this->nrSectors += 1;
 			for (int i = this->nrSectors-1; i < this->nrSectors; i++) {
-				(*this)[i].name = "NA";
+				(*this)[i].name = 0;
 			}
 			return *this;
 		}
@@ -431,7 +449,7 @@ public:
 		else {
 			this->nrSectors += 1;
 			for (int i = copy.nrSectors; i < this->nrSectors; i++) {
-				(*this)[i].name = "NA";
+				(*this)[i].name = 0;
 			}
 		}
 		return copy;
@@ -449,7 +467,7 @@ public:
 		}
 		copy.nrSectors += value;
 		for (int i = this->nrSectors; i < copy.nrSectors; i++) {
-			copy[i].name = "NA";
+			copy[i].name = 0;
 		}
 		return copy;
 	}
@@ -471,6 +489,8 @@ public:
 	}
 
 	friend Stadium operator+(int value, const Stadium& s);
+	friend void writeStadiumToFile(const Stadium& s);
+	friend Stadium readStadiumFromFile(string fname, int id);
 };
 
 Stadium operator+(int value, const Stadium& s) {
@@ -480,7 +500,7 @@ Stadium operator+(int value, const Stadium& s) {
 	}
 	copy.nrSectors += value;
 	for (int i = s.nrSectors; i < copy.nrSectors; i++) {
-		copy[i].name = "NA";
+		copy[i].name = 0;
 	}
 	return copy;
 }
@@ -505,3 +525,87 @@ int Stadium::MAX_NR_ROWS = 20;
 int Stadium::MIN_NR_ROWS =1 ;
 int Stadium::MAX_NR_RINGS = 4;
 int Stadium::MIN_NR_RINGS = 1;
+int Stadium::id = setId("Places.bin");
+
+void writeStadiumToFile(const Stadium& s) {
+	fstream f("Places.bin", ios::binary | ios::in | ios::ate);
+	if (!f) {
+		throw exception("No file");
+	}
+	typeP Place = Stadium_;
+	int TotalSize = (s.nrSectors * 4 + 3) * sizeof(int) + sizeof(char) * 31 + sizeof(char) * (strlen(s.address) + 1) + sizeof(bool) + sizeof(typeP);
+	f.write((char*)&TotalSize, sizeof(int));
+	f.write((char*)&Place, sizeof(typeP));
+	f.write((char*)&s.idP, sizeof(int));
+	f.write(s.name, sizeof(char) * 31);
+	f.write((char*)&s.nrPermanentlyFree, sizeof(int));
+	f.write((char*)&s.isAvailable, sizeof(bool));
+	f.write(s.address, sizeof(char) * (strlen(s.address) + 1));
+	f.write((char*)&s.nrSectors, sizeof(int));
+	for (int i = 0; i < s.nrSectors; i++) {
+		f.write((char*)&s.sector[i].name, sizeof(int));
+		f.write((char*)&s.sector[i].nrRows, sizeof(int));
+		f.write((char*)&s.sector[i].nrSeatsPerRow, sizeof(int));
+		f.write((char*)&s.sector[i].ring, sizeof(int));
+		f.write((char*)&s.sector[i].isAvailable, sizeof(int));
+	}
+
+	f.seekg(ios::beg);
+	int value;
+	f.read((char*)&value, sizeof(int));
+	value++;
+	f.seekp(0, ios::beg);
+	f.write((char*)&value, sizeof(int));
+
+	f.close();
+}
+
+void createStadium() {
+	Stadium s;
+	cin >> s;
+	writeStadiumToFile(s);
+}
+
+Stadium readStadiumFromFile(string fname, int id) {
+	fstream f(fname.c_str(), ios::binary | ios::in | ios::ate);
+	if (!f) {
+		throw exception("No file");
+	}
+	Stadium s;
+	int value;
+	f.read((char*)&value, sizeof(int));
+	for (int i = 1; i < value; i++) {
+		int totalSize;
+		f.read((char*)&totalSize, sizeof(int));
+		typeP place;
+		f.read((char*)&place, sizeof(typeP));
+		if (place !=Stadium_) {
+			f.seekg(totalSize - sizeof(int) - sizeof(typeP), ios::cur);
+			continue;
+		}
+		int idP;
+		f.read((char*)&idP, sizeof(int));
+		if (idP != id) {
+			f.seekg(totalSize - sizeof(int) - sizeof(typeP) - sizeof(int), ios::cur);
+			continue;
+		}
+		f.read(s.name, sizeof(char) * 31);
+		f.read((char*)&s.nrPermanentlyFree, sizeof(int));
+		f.read((char*)&s.isAvailable, sizeof(bool));
+		char add[100];
+		f.read(add, sizeof(char)*100);
+		s.address = new char[strlen(add) + 1];
+		strcpy_s(s.address, strlen(add) + 1, add);
+		f.read((char*)&s.nrSectors, sizeof(int));
+		for (int i = 0; i < s.nrSectors; i++) {
+			f.read((char*)&s.sector[i].name, sizeof(int));
+			f.read((char*)&s.sector[i].nrRows, sizeof(int));
+			f.read((char*)&s.sector[i].nrSeatsPerRow, sizeof(int));
+			f.read((char*)&s.sector[i].ring, sizeof(int));
+			f.read((char*)&s.sector[i].isAvailable, sizeof(int));
+		}
+		break;
+	}
+	f.close();
+	return s;
+}

@@ -3,8 +3,63 @@
 #include"concert.h"
 #include"Theatre.h"
 #include"sportMatch.h"
+#include"event.h"
 
 using namespace std;
+
+void createPlace() {
+	int choice = 0;
+	cout << "1. Create a cinema." << endl;
+	cout << "2. Create a theatre." << endl;
+	cout << "3. Create a concert." << endl;
+	cout << "4. Create a stadium." << endl;
+	cout << "Choose a number from 1 to 4 : ";
+	cin >> choice;
+	if (choice == 1) {
+		//createCinema();
+		return;
+	}
+	if (choice == 2) {
+		//createTheatre();
+		return;
+	}
+	if (choice == 3) {
+		//createConcert();
+		return;
+	}
+	if (choice == 4) {
+		//createStadium();
+		return;
+	}
+}
+
+void adminMenu() {
+	cout << "1. Create an event place." << endl;
+	cout << "2. Create an event." << endl;
+	cout << "3. Associate the place with the event." << endl;
+	cout << "4. Exit." << endl;
+	cout << "Choose a number from 1 to 4 : ";
+}
+
+void exploreAdminMenu() {
+	int choice = 0;
+	do { 
+		adminMenu();
+		cin >> choice;
+		if (choice == 1) {
+			//createPlace();
+			continue;
+		}
+		if (choice == 2) {
+			//createEvent();
+			continue;
+		}
+		if (choice == 3) {
+			//createTickets();
+			continue;
+		}
+	} while (choice!=4);
+}
 
 int main() {
 	//CinemaHall cinema;
