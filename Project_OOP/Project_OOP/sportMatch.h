@@ -3,6 +3,7 @@
 #include<iostream>
 #include<string>
 #include<cstring>
+#include"event.h"
 
 using namespace std;
 
@@ -286,7 +287,7 @@ public:
 
 	void readStadium() {
 		this->id--;
-		this->isAvailable = false;
+		this->isAvailable = true;
 		cout << "Name : ";
 		char name[31];
 		cin.getline(name, 31);
@@ -315,7 +316,7 @@ public:
 		int nrRows;
 		int nrSeatsPerRow;
 		for (int i = 0; i < this->nrSectors; i++) {
-			this->sector[i].isAvailable = false;
+			this->sector[i].isAvailable = true;
 			cout << endl << endl << "Sector name : ";
 			cin >> s_name;
 			this->sector[i].name = s_name;
@@ -528,7 +529,8 @@ int Stadium::MIN_NR_RINGS = 1;
 int Stadium::id = setId("Places.bin");
 
 void writeStadiumToFile(const Stadium& s) {
-	fstream f("Places.bin", ios::binary | ios::in | ios::ate);
+	//fstream f("Places.bin", ios::binary | ios::in | ios::ate);
+	fstream f("Places.bin", ios::binary | ios::app);
 	if (!f) {
 		throw exception("No file");
 	}
@@ -567,7 +569,8 @@ void createStadium() {
 }
 
 Stadium readStadiumFromFile(string fname, int id) {
-	fstream f(fname.c_str(), ios::binary | ios::in | ios::ate);
+	//fstream f(fname.c_str(), ios::binary | ios::in | ios::ate);
+	fstream f(fname.c_str(), ios::binary | ios::app);
 	if (!f) {
 		throw exception("No file");
 	}

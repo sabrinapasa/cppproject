@@ -4,6 +4,7 @@
 #include"Theatre.h"
 #include"sportMatch.h"
 #include"event.h"
+#include"FILES.h"
 
 using namespace std;
 
@@ -16,19 +17,23 @@ void createPlace() {
 	cout << "Choose a number from 1 to 4 : ";
 	cin >> choice;
 	if (choice == 1) {
-		//createCinema();
+		cin.get();
+		createCinema();
 		return;
 	}
 	if (choice == 2) {
-		//createTheatre();
+		cin.get();
+		createTheatre();
 		return;
 	}
 	if (choice == 3) {
-		//createConcert();
+		cin.get();
+		createConcert();
 		return;
 	}
 	if (choice == 4) {
-		//createStadium();
+		cin.get();
+		createStadium();
 		return;
 	}
 }
@@ -47,7 +52,7 @@ void exploreAdminMenu() {
 		adminMenu();
 		cin >> choice;
 		if (choice == 1) {
-			//createPlace();
+			createPlace();
 			continue;
 		}
 		if (choice == 2) {
@@ -65,7 +70,7 @@ int main() {
 	//CinemaHall cinema;
 	//cinema.printCinemaHall();
 	//cout << endl;
-	int seats[] = {3, 4, 5, 8};
+	//int seats[] = {3, 4, 5, 8};
 	/*CinemaHall c1(4, seats);
 	cout << c1.sum();
 	cout << endl;
@@ -246,6 +251,8 @@ int main() {
 	cout << endl << s7;
 	int value = (int)s3;
 	cout << endl << value;*/
+
+	exploreAdminMenu();
 
 	return 0;
 }

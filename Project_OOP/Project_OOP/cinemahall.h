@@ -3,6 +3,7 @@
 #include<iostream>
 #include<string>
 #include<cstring>
+#include"event.h"
 
 using namespace std;
 
@@ -192,7 +193,7 @@ public:
 	void readCinemaHall() {
 		this->id--;
 		cout << "Hall name: ";
-		this->isAvailable = false;
+		this->isAvailable = true;
 		char name[11];
 		int nrRows;
 		cin.getline(name, 11);
@@ -434,7 +435,8 @@ int CinemaHall::MAX_SEATS_PER_ROW = 30;
 int CinemaHall::id = setId("Places.bin");
 
 void writeCinemaToFile(const CinemaHall& c) {
-	fstream f("Places.bin", ios::binary | ios::in | ios::ate);
+	//fstream f("Places.bin", ios::binary | ios::in | ios::ate);
+	fstream f("Places.bin", ios::binary | ios::app);
 	if (!f) {
 		throw exception("No file");
 	}
@@ -467,7 +469,8 @@ void createCinema() {
 }
 
 CinemaHall readCinemaFromFile(string fname,int id) {
-	fstream f(fname.c_str(), ios::binary | ios::in | ios::ate);
+	//fstream f(fname.c_str(), ios::binary | ios::in | ios::ate);
+	fstream f(fname.c_str(), ios::binary | ios::app);
 	if (!f) {
 		throw exception("No file");
 	}

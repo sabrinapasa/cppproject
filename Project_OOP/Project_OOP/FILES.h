@@ -5,9 +5,10 @@
 using namespace std;
 
 int setId(string fname) {
-	fstream f(fname.c_str(), ios::binary | ios::in | ios::ate);
+	//fstream f(fname.c_str(), ios::binary | ios::in | ios::ate);
+	fstream f("Places.bin", ios::binary | ios::app);
 	if (!f) {
-		throw exception("No file");
+		cout << endl << "No file exists.";
 	}
 	if (f.eof()) {
 		int defaultValue = 0;

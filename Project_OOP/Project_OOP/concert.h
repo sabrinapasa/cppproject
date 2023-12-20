@@ -2,6 +2,8 @@
 #include<iostream>
 #include<string>
 #include<cstring>
+#include"FILES.h"
+#include"event.h"
 
 using namespace std;
 
@@ -10,17 +12,21 @@ class Concert {
 	char name[21];
 	char* address;
 	bool freeEntrance;
+	int idP;
 
 public:
 
 	static int MAX_NR_PERSONS;
 	static int MIN_NR_PERSONS;
+	static int id;
 
 	Concert() {
 		this->name[0] = '\0';
 		this->nrPersons = 0;
 		this->address = nullptr;
 		this->freeEntrance = false;
+		this->id++;
+		this->idP = this->id;
 	}
 
 	Concert(const int nrPersons, const char* address) {
@@ -31,6 +37,8 @@ public:
 		strcpy_s(this->address, strlen(address) + 1, address);
 		this->name[0] = '\0';
 		this->freeEntrance = false;
+		this->id++;
+		this->idP = this->id;
 	}
 
 	Concert(const int nrPersons, const char* address, const char* name, bool freeEntrance) {
@@ -44,6 +52,8 @@ public:
 		}
 		strcpy_s(this->name, 21, name);
 		this->freeEntrance = freeEntrance;
+		this->id++;
+		this->idP = this->id;
 	}
 
 	void setFreeEntrance(bool freeEntrance) {
@@ -105,6 +115,8 @@ public:
 			this->address = new char[strlen(c.address)+1];
 			strcpy_s(this->address, strlen(c.address) + 1, c.address);
 		}
+		this->id++;
+		this->idP = this->id;
 	}
 
 	void printConcert() const {
@@ -128,6 +140,7 @@ public:
 	}
 
 	void readConcert() {
+		this->id--;
 		cout << "Concert name: ";
 		this->freeEntrance = false;
 		char name[21];
@@ -149,6 +162,8 @@ public:
 		cin.getline(address, 100);
 		this->address = new char[strlen(address) + 1];
 		strcpy_s(this->address, strlen(address) + 1, address);
+		this->id++;
+		this->idP = this->id;
 	}
 
 	bool assessFreeEntrance() {
@@ -265,6 +280,9 @@ public:
 			return false;
 		}
 	}
+
+	friend void writeConcertToFile(const Concert& c);
+	friend Concert readConcertFromFile(string fname, int id);
 };
 
 Concert operator+(int value, const Concert& c) {
@@ -303,5 +321,77 @@ istream& operator>>(istream& in, Concert& c) {
 }
 
 
-int Concert::MAX_NR_PERSONS = 1000;
+int Concert::MAX_NR_PERSONS = 100000;
 int Concert::MIN_NR_PERSONS = 0;
+int Concert::id = setId("Places.bin");
+
+void writeConcertToFile(const Concert& c) {
+	//fstream f("Places.bin", ios::binary | ios::in | ios::ate);
+	fstream f("Places.bin", ios::binary | ios::app);
+	if (!f) {
+		throw exception("No file");
+	}
+	typeP Place = Concert_;
+	int TotalSize = 3 * sizeof(int) + sizeof(char) * 21 + sizeof(bool) + sizeof(typeP) + strlen(c.address) + 1;
+	f.write((char*)&TotalSize, sizeof(int));
+	f.write((char*)&Place, sizeof(typeP));
+	f.write((char*)&c.idP, sizeof(int));
+	f.write(c.name, sizeof(char) * 21);
+	f.write((char*)&c.nrPersons, sizeof(int));
+	int nrChar = strlen(c.address) + 1;
+	f.write((char*)&nrChar, sizeof(int));
+	f.write(c.address, nrChar);
+	f.write((char*)&c.freeEntrance, sizeof(bool));
+
+	f.seekg(ios::beg);
+	int value;
+	f.read((char*)&value, sizeof(int));
+	value++;
+	f.seekp(0, ios::beg);
+	f.write((char*)&value, sizeof(int));
+
+	f.close();
+}
+
+void createConcert() {
+	Concert c;
+	cin >> c;
+	writeConcertToFile(c);
+}
+
+Concert readConcertFromFile(string fname, int id) {
+	//fstream f(fname.c_str(), ios::binary | ios::in | ios::ate);
+	fstream f(fname.c_str(), ios::binary | ios::app);
+	if (!f) {
+		throw exception("No file");
+	}
+	Concert c;
+	int value;
+	f.read((char*)&value, sizeof(int));
+	for (int i = 1; i < value; i++) {
+		int totalSize;
+		f.read((char*)&totalSize, sizeof(int));
+		typeP place;
+		f.read((char*)&place, sizeof(typeP));
+		if (place != Concert_) {
+			f.seekg(totalSize - sizeof(int) - sizeof(typeP), ios::cur);
+			continue;
+		}
+		int idP;
+		f.read((char*)&idP, sizeof(int));
+		if (idP != id) {
+			f.seekg(totalSize - sizeof(int) - sizeof(typeP) - sizeof(int), ios::cur);
+			continue;
+		}
+		f.read(c.name, sizeof(char) * 21);
+		f.read((char*)&c.nrPersons, sizeof(int));
+		int value;
+		f.read((char*)&value, sizeof(int));
+		c.address = new char[value];
+		f.read(c.address, value);
+		f.read((char*)&c.freeEntrance, sizeof(bool));
+		break;
+	}
+	f.close();
+	return c;
+}

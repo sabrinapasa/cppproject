@@ -2,6 +2,8 @@
 #include<iostream>
 #include<string>
 #include<cstring>
+#include"FILES.h"
+#include"event.h"
 
 using namespace std;
 
@@ -11,6 +13,7 @@ class Theatre {
 	int* nrSeats;
 	int nrSeatsVIP;
 	bool isAvailable;
+	int idP;
 
 public:
 	
@@ -20,6 +23,7 @@ public:
 	static int MAX_SEATS_PER_ROW;
 	static int MIN_SEATS_VIP;
 	static int MAX_SEATS_VIP;
+	static int id;
 
 	Theatre() {
 		this->isAvailable = false;
@@ -27,6 +31,8 @@ public:
 		this->nrRows = 0;
 		this->nrSeatsVIP = 0;
 		this->nrSeats = nullptr;
+		this->id++;
+		this->idP = this->id;
 	}
 
 	Theatre(const int nrRows, const int* nrSeats, const int nrSeatsVIP) {
@@ -39,6 +45,8 @@ public:
 		this->nrSeatsVIP = nrSeatsVIP;
 		this->isAvailable = false;
 		this->address[0] = '\0';
+		this->id++;
+		this->idP = this->id;
 	}
 
 	Theatre(const int nrRows, const int* nrSeats, const char* address, const int nrSeatsVIP) {
@@ -54,6 +62,8 @@ public:
 			throw new exception("Address too long!");
 		}
 		strcpy_s(this->address, 51, address);
+		this->id++;
+		this->idP = this->id;
 	}
 
 	void setAvailability(bool isAvailable) {
@@ -137,6 +147,8 @@ public:
 			for (int i = 0; i < t.nrRows; i++)
 				this->nrSeats[i] = t.nrSeats[i];
 		}
+		this->id++;
+		this->idP = this->id;
 	}
 
 	void printTheatre() const {
@@ -163,8 +175,9 @@ public:
 	}
 
 	void readTheatre() {
+		this->id--;
 		cout << "Theatre address: ";
-		this->isAvailable = false;
+		this->isAvailable = true;
 		char address[11];
 		int nrRows;
 		int nrSeatsVIP;
@@ -191,6 +204,8 @@ public:
 			cin >> this->nrSeats[i];
 		}
 		cin.get();
+		this->id++;
+		this->idP = this->id;
 	}
 
 	int sum() {
@@ -404,6 +419,9 @@ public:
 			return false;
 		}
 	}
+
+	friend Theatre readTheatreFromFile(string fname, int id);
+	friend void writeTheatreToFile(const Theatre& t);
 };
 
 Theatre operator+(int value, const Theatre& c) {
@@ -444,3 +462,77 @@ int Theatre::MIN_SEATS_PER_ROW = 0;
 int Theatre::MAX_SEATS_PER_ROW = 50;
 int Theatre::MIN_SEATS_VIP = 0;
 int Theatre::MAX_SEATS_VIP = 100;
+int Theatre::id = setId("Places.bin");
+
+void writeTheatreToFile(const Theatre& t) {
+	//fstream f("Places.bin", ios::binary | ios::in | ios::ate);
+	fstream f("Places.bin", ios::binary | ios::app);
+	if (!f) {
+		throw exception("No file");
+	}
+	typeP Place = Theatre_;
+	int TotalSize = (t.nrRows + 3) * sizeof(int) + sizeof(char) * 51 + sizeof(bool) + sizeof(typeP);
+	f.write((char*)&TotalSize, sizeof(int));
+	f.write((char*)&Place, sizeof(typeP));
+	f.write((char*)&t.idP, sizeof(int));
+	f.write(t.address, sizeof(char) * 51);
+	f.write((char*)&t.nrRows, sizeof(int));
+	for (int i = 0; i < t.nrRows; i++) {
+		f.write((char*)&t.nrSeats[i], sizeof(int));
+	}
+	f.write((char*)&t.isAvailable, sizeof(bool));
+	f.write((char*)&t.nrSeatsVIP, sizeof(int));
+
+	f.seekg(ios::beg);
+	int value;
+	f.read((char*)&value, sizeof(int));
+	value++;
+	f.seekp(0, ios::beg);
+	f.write((char*)&value, sizeof(int));
+
+	f.close();
+}
+
+void createTheatre() {
+	Theatre t;
+	cin >> t;
+	writeTheatreToFile(t);
+}
+
+Theatre readTheatreFromFile(string fname, int id) {
+	//fstream f(fname.c_str(), ios::binary | ios::in | ios::ate);
+	fstream f(fname.c_str(), ios::binary | ios::app);
+	if (!f) {
+		throw exception("No file");
+	}
+	Theatre t;
+	int value;
+	f.read((char*)&value, sizeof(int));
+	for (int i = 1; i < value; i++) {
+		int totalSize;
+		f.read((char*)&totalSize, sizeof(int));
+		typeP place;
+		f.read((char*)&place, sizeof(typeP));
+		if (place != Theatre_) {
+			f.seekg(totalSize - sizeof(int) - sizeof(typeP), ios::cur);
+			continue;
+		}
+		int idP;
+		f.read((char*)&idP, sizeof(int));
+		if (idP != id) {
+			f.seekg(totalSize - sizeof(int) - sizeof(typeP) - sizeof(int), ios::cur);
+			continue;
+		}
+		f.read(t.address, sizeof(char) * 51);
+		f.read((char*)&t.nrRows, sizeof(int));
+		t.nrSeats = new int[t.nrRows];
+		for (int i = 0; i < t.nrRows; i++) {
+			f.read((char*)&t.nrSeats[i], sizeof(int));
+		}
+		f.read((char*)&t.isAvailable, sizeof(bool));
+		f.read((char*)&t.nrSeatsVIP, sizeof(int));
+		break;
+	}
+	f.close();
+	return t;
+}
