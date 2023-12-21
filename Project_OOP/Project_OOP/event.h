@@ -32,6 +32,10 @@ public:
 		this->id_place = id_place;
 	}
 
+	~Event() {
+
+	}
+
 	Event(const Event& e) {
 		this->name = e.name;
 		this->dateTime = e.dateTime;
@@ -40,5 +44,88 @@ public:
 		this->id_place = e.id_place;
 	}
 
-	
+	Event& operator=(const Event& e) {
+		if (this == &e) {
+			return *this;
+		}
+		this->name = e.name;
+		this->dateTime = e.dateTime;
+		this->typeEvent = e.typeEvent;
+		this->id = e.id;
+		this->id_place = e.id_place;
+	}
+
+	void printEvent() const {
+		cout << endl << "Event name: " << this->name;
+		cout << endl << "Event type: ";
+		if (this->typeEvent == CINEMA_HALL) {
+			cout << "Cinema_Hall";
+		}
+		if (this->typeEvent == CONCERT) {
+			cout << "Concert";
+		}
+		if (this->typeEvent == STADIUM) {
+			cout << "Stadium";
+		}
+		if (this->typeEvent == THEATRE) {
+			cout << "Theatre";
+		}
+		if (this->typeEvent == NOT_KNOWN) {
+			cout << "Not known";
+		}
+		cout << endl << "Event ID: " << this->id;
+		cout << endl << "Event date: " << this->dateTime;
+		cout << endl << "Event ID_place: " << this->id_place;
+	}
+
+	void readEvent() {
+		cout << endl << "Event name: ";
+		cin >> this->name;
+		cout << endl << "Event type: ";
+		string EventType;
+		cin >> EventType;
+		while (true) {
+			if (EventType == "Cinema") {
+				this->typeEvent = CINEMA_HALL;
+				break;
+			}
+			if (EventType == "Concert") {
+				this->typeEvent = CONCERT;
+				break;
+			}
+			if (EventType == "Stadium") {
+				this->typeEvent = STADIUM;
+				break;
+			}
+			if (EventType == "Theatre") {
+				this->typeEvent = THEATRE;
+				break;
+			}
+			cout << endl << "Event type: ";
+			cin >> EventType;
+		}
+		cout << endl << "Event ID: ";
+		cin >> this->id;
+		if (this->id <= 0) {
+			throw exception("Invalid input!");
+		}
+		cout << endl << "Event date: ";
+		cin >> this->dateTime;
+		cout << endl << "Event ID_place: ";
+		cin >> this->id_place;
+		if (this->id_place <= 0) {
+			throw exception("Invalid input!");
+		}
+	}
+
 };
+
+ostream& operator<<(ostream& out, const Event& e) {
+	e.printEvent();
+	return out;
+}
+
+istream& operator>>(istream& in, Event& e) {
+	e.readEvent();
+	return in;
+}
