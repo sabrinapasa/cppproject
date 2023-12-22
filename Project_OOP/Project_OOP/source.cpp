@@ -252,9 +252,9 @@ int main() {
 	int value = (int)s3;
 	cout << endl << value;*/
 
-	//exploreAdminMenu();
+	exploreAdminMenu();
 
-	Event e1("Magic Night", "30.12.2023", 4, 1, CONCERT);
+	/*Event e1("Magic Night", "30.12.2023", 4, 1, CONCERT);
 	cout << e1;
 	Event e2;
 	e2 = e1;
@@ -263,7 +263,7 @@ int main() {
 	Event e3;
 	cin >> e3;
 	cout << endl;
-	cout << e3;
+	cout << e3;*/
 
 	return 0;
 }

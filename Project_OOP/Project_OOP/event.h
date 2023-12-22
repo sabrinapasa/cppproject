@@ -118,6 +118,7 @@ public:
 		}
 	}
 
+	friend void writeEventToFile(const Event& e);
 };
 
 ostream& operator<<(ostream& out, const Event& e) {
@@ -129,3 +130,27 @@ istream& operator>>(istream& in, Event& e) {
 	e.readEvent();
 	return in;
 }
+
+void writeEventToFile(const Event& e) {
+	//fstream f("Places.bin", ios::binary | ios::in | ios::ate);
+	fstream f("Events.bin", ios::binary | ios::app);
+	if (!f) {
+		throw exception("No file");
+	}
+	int TotalSize = 3 * sizeof(int) + sizeof(typeE) + e.name.size() + 1 + e.dateTime.size() + 1;
+	f.write((char*)&TotalSize, sizeof(int));
+	f.write((char*)&e.typeEvent, sizeof(typeE));
+	f.write((char*)&e.id_place, sizeof(int));
+	f.write(e.name.c_str(), e.name.size() + 1);
+	f.write((char*)&e.id, sizeof(int));
+	f.write(e.dateTime.c_str(), e.dateTime.size() + 1);
+
+	f.close();
+}
+
+void createEvent() {
+	Event e;
+	cin >> e;
+	writeEventToFile(e);
+}
+
