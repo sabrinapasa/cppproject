@@ -5,6 +5,7 @@
 #include"sportMatch.h"
 #include"event.h"
 #include"FILES.h"
+#include"tickets.h"
 
 using namespace std;
 
@@ -56,11 +57,11 @@ void exploreAdminMenu() {
 			continue;
 		}
 		if (choice == 2) {
-			//createEvent();
+			createEvent();
 			continue;
 		}
 		if (choice == 3) {
-			//createTickets();
+			createTickets();
 			continue;
 		}
 	} while (choice!=4);

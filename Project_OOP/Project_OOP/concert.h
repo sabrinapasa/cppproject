@@ -332,7 +332,7 @@ void writeConcertToFile(const Concert& c) {
 		throw exception("No file");
 	}
 	typeP Place = Concert_;
-	int TotalSize = 3 * sizeof(int) + sizeof(char) * 21 + sizeof(bool) + sizeof(typeP) + strlen(c.address) + 1;
+	int TotalSize = 4 * sizeof(int) + sizeof(char) * 21 + sizeof(bool) + sizeof(typeP) + strlen(c.address) + 1;
 	f.write((char*)&TotalSize, sizeof(int));
 	f.write((char*)&Place, sizeof(typeP));
 	f.write((char*)&c.idP, sizeof(int));
@@ -343,7 +343,7 @@ void writeConcertToFile(const Concert& c) {
 	f.write(c.address, nrChar);
 	f.write((char*)&c.freeEntrance, sizeof(bool));
 
-	f.seekg(ios::beg);
+	f.seekg(0,ios::beg);
 	int value;
 	f.read((char*)&value, sizeof(int));
 	value++;
@@ -366,21 +366,23 @@ Concert readConcertFromFile(string fname, int id) {
 		throw exception("No file");
 	}
 	Concert c;
+	c.id--;
 	int value;
 	f.read((char*)&value, sizeof(int));
 	for (int i = 1; i < value; i++) {
 		int totalSize;
+		int currentPos = f.tellg();
 		f.read((char*)&totalSize, sizeof(int));
 		typeP place;
 		f.read((char*)&place, sizeof(typeP));
 		if (place != Concert_) {
-			f.seekg(totalSize - sizeof(int) - sizeof(typeP), ios::cur);
+			f.seekg(totalSize + currentPos, ios::beg);
 			continue;
 		}
 		int idP;
 		f.read((char*)&idP, sizeof(int));
 		if (idP != id) {
-			f.seekg(totalSize - sizeof(int) - sizeof(typeP) - sizeof(int), ios::cur);
+			f.seekg(totalSize +currentPos, ios::beg);
 			continue;
 		}
 		f.read(c.name, sizeof(char) * 21);

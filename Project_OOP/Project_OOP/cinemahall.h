@@ -441,7 +441,7 @@ void writeCinemaToFile(const CinemaHall& c) {
 		throw exception("No file");
 	}
 	typeP Place = Cinema_Hall_;
-	int TotalSize = (c.nrRows + 2) * sizeof(int) + sizeof(char) * 11 + sizeof(bool) + sizeof(typeP);
+	int TotalSize = (c.nrRows + 3) * sizeof(int) + sizeof(char) * 11 + sizeof(bool) + sizeof(typeP);
 	f.write((char*)&TotalSize, sizeof(int));
 	f.write((char*)&Place, sizeof(typeP));
 	f.write((char*)&c.idP, sizeof(int));
@@ -452,7 +452,7 @@ void writeCinemaToFile(const CinemaHall& c) {
 	}
 	f.write((char*)&c.isAvailable, sizeof(bool));
 
-	f.seekg(ios::beg);
+	f.seekg(0, ios::beg);
 	int value;
 	f.read((char*)&value, sizeof(int));
 	value++;
@@ -475,21 +475,23 @@ CinemaHall readCinemaFromFile(string fname,int id) {
 		throw exception("No file");
 	}
 	CinemaHall c;
+	c.id--;
 	int value;
 	f.read((char*)&value, sizeof(int));
 	for (int i = 1; i < value; i++) {
 		int totalSize;
+		int currentPos = f.tellg();
 		f.read((char*)&totalSize, sizeof(int));
 		typeP place;
 		f.read((char*)&place, sizeof(typeP));
 		if (place != Cinema_Hall_) {
-			f.seekg(totalSize - sizeof(int) - sizeof(typeP), ios::cur);
+			f.seekg(totalSize + currentPos, ios::beg);
 			continue;
 		}
 		int idP;
 		f.read((char*)&idP, sizeof(int));
 		if (idP != id) {
-			f.seekg(totalSize - sizeof(int) - sizeof(typeP) - sizeof(int), ios::cur);
+			f.seekg(totalSize + currentPos, ios::beg);
 			continue;
 		}
 		f.read(c.name, sizeof(char) * 11);

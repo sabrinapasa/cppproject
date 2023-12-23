@@ -471,7 +471,7 @@ void writeTheatreToFile(const Theatre& t) {
 		throw exception("No file");
 	}
 	typeP Place = Theatre_;
-	int TotalSize = (t.nrRows + 3) * sizeof(int) + sizeof(char) * 51 + sizeof(bool) + sizeof(typeP);
+	int TotalSize = (t.nrRows + 4) * sizeof(int) + sizeof(char) * 51 + sizeof(bool) + sizeof(typeP);
 	f.write((char*)&TotalSize, sizeof(int));
 	f.write((char*)&Place, sizeof(typeP));
 	f.write((char*)&t.idP, sizeof(int));
@@ -483,7 +483,7 @@ void writeTheatreToFile(const Theatre& t) {
 	f.write((char*)&t.isAvailable, sizeof(bool));
 	f.write((char*)&t.nrSeatsVIP, sizeof(int));
 
-	f.seekg(ios::beg);
+	f.seekg(0,ios::beg);
 	int value;
 	f.read((char*)&value, sizeof(int));
 	value++;
@@ -506,21 +506,23 @@ Theatre readTheatreFromFile(string fname, int id) {
 		throw exception("No file");
 	}
 	Theatre t;
+	t.id--;
 	int value;
 	f.read((char*)&value, sizeof(int));
 	for (int i = 1; i < value; i++) {
 		int totalSize;
+		int currentPos = f.tellg();
 		f.read((char*)&totalSize, sizeof(int));
 		typeP place;
 		f.read((char*)&place, sizeof(typeP));
 		if (place != Theatre_) {
-			f.seekg(totalSize - sizeof(int) - sizeof(typeP), ios::cur);
+			f.seekg(totalSize + currentPos, ios::beg);
 			continue;
 		}
 		int idP;
 		f.read((char*)&idP, sizeof(int));
 		if (idP != id) {
-			f.seekg(totalSize - sizeof(int) - sizeof(typeP) - sizeof(int), ios::cur);
+			f.seekg(totalSize + currentPos, ios::beg);
 			continue;
 		}
 		f.read(t.address, sizeof(char) * 51);

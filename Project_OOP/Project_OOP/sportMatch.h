@@ -535,7 +535,7 @@ void writeStadiumToFile(const Stadium& s) {
 		throw exception("No file");
 	}
 	typeP Place = Stadium_;
-	int TotalSize = (s.nrSectors * 4 + 3) * sizeof(int) + sizeof(char) * 31 + sizeof(char) * (strlen(s.address) + 1) + sizeof(bool) + sizeof(typeP);
+	int TotalSize = (s.nrSectors * 5 + 4) * sizeof(int) + sizeof(char) * 31 + sizeof(char) * (strlen(s.address) + 1) + sizeof(bool) + sizeof(typeP);
 	f.write((char*)&TotalSize, sizeof(int));
 	f.write((char*)&Place, sizeof(typeP));
 	f.write((char*)&s.idP, sizeof(int));
@@ -552,7 +552,7 @@ void writeStadiumToFile(const Stadium& s) {
 		f.write((char*)&s.sector[i].isAvailable, sizeof(int));
 	}
 
-	f.seekg(ios::beg);
+	f.seekg(0, ios::beg);
 	int value;
 	f.read((char*)&value, sizeof(int));
 	value++;
@@ -575,21 +575,23 @@ Stadium readStadiumFromFile(string fname, int id) {
 		throw exception("No file");
 	}
 	Stadium s;
+	s.id--;
 	int value;
 	f.read((char*)&value, sizeof(int));
 	for (int i = 1; i < value; i++) {
 		int totalSize;
+		int currentPos = f.tellg();
 		f.read((char*)&totalSize, sizeof(int));
 		typeP place;
 		f.read((char*)&place, sizeof(typeP));
 		if (place !=Stadium_) {
-			f.seekg(totalSize - sizeof(int) - sizeof(typeP), ios::cur);
+			f.seekg(totalSize + currentPos, ios::beg);
 			continue;
 		}
 		int idP;
 		f.read((char*)&idP, sizeof(int));
 		if (idP != id) {
-			f.seekg(totalSize - sizeof(int) - sizeof(typeP) - sizeof(int), ios::cur);
+			f.seekg(totalSize + currentPos, ios::beg);
 			continue;
 		}
 		f.read(s.name, sizeof(char) * 31);
@@ -610,5 +612,6 @@ Stadium readStadiumFromFile(string fname, int id) {
 		break;
 	}
 	f.close();
+
 	return s;
 }
