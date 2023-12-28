@@ -227,5 +227,8 @@ Event readEventFromFile(string fname, int id) {
 		f.read((char*)&b, sizeof(int));
 		f.read((char*)buffer, b);
 		e.dateTime = buffer;
+		break;
 	}
+	f.close();
+	return e;
 }

@@ -266,5 +266,10 @@ int main() {
 	cout << endl;
 	cout << e3;*/
 
+	//CinemaHall c = readCinemaFromFile("Places.bin", 2);
+	//cout << c;
+
+	//cout << readCinemaFromFile("Places.bin", 1);
+
 	return 0;
 }

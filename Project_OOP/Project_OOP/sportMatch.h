@@ -12,7 +12,7 @@ struct Sector{
 	int nrRows;
 	int nrSeatsPerRow;
 	int ring;
-	int isAvailable;
+	bool isAvailable;
 };
 
 class Stadium {
@@ -103,7 +103,7 @@ public:
 		this->nrSectors = nrSectors;
 	}
 
-	int getNrPersons() const {
+	int getNrSectors() const {
 		return this->nrSectors;
 	}
 
@@ -535,7 +535,7 @@ void writeStadiumToFile(const Stadium& s) {
 		throw exception("No file");
 	}
 	typeP Place = Stadium_;
-	int TotalSize = (s.nrSectors * 5 + 4) * sizeof(int) + sizeof(char) * 31 + sizeof(char) * (strlen(s.address) + 1) + sizeof(bool) + sizeof(typeP);
+	int TotalSize = (s.nrSectors * 4 + 4) * sizeof(int) + sizeof(char) * 31 + sizeof(char) * (strlen(s.address) + 1) + (s.nrSectors + 1) * sizeof(bool) + sizeof(typeP);
 	f.write((char*)&TotalSize, sizeof(int));
 	f.write((char*)&Place, sizeof(typeP));
 	f.write((char*)&s.idP, sizeof(int));
@@ -549,7 +549,7 @@ void writeStadiumToFile(const Stadium& s) {
 		f.write((char*)&s.sector[i].nrRows, sizeof(int));
 		f.write((char*)&s.sector[i].nrSeatsPerRow, sizeof(int));
 		f.write((char*)&s.sector[i].ring, sizeof(int));
-		f.write((char*)&s.sector[i].isAvailable, sizeof(int));
+		f.write((char*)&s.sector[i].isAvailable, sizeof(bool));
 	}
 
 	f.seekg(0, ios::beg);
@@ -607,7 +607,7 @@ Stadium readStadiumFromFile(string fname, int id) {
 			f.read((char*)&s.sector[i].nrRows, sizeof(int));
 			f.read((char*)&s.sector[i].nrSeatsPerRow, sizeof(int));
 			f.read((char*)&s.sector[i].ring, sizeof(int));
-			f.read((char*)&s.sector[i].isAvailable, sizeof(int));
+			f.read((char*)&s.sector[i].isAvailable, sizeof(bool));
 		}
 		break;
 	}
