@@ -6,6 +6,7 @@
 #include"event.h"
 #include"FILES.h"
 #include"tickets.h"
+#include"interface.h"
 
 using namespace std;
 
@@ -253,7 +254,7 @@ int main() {
 	int value = (int)s3;
 	cout << endl << value;*/
 
-	exploreAdminMenu();
+	//exploreAdminMenu();
 
 	/*Event e1("Magic Night", "30.12.2023", 4, 1, CONCERT);
 	cout << e1;
@@ -270,6 +271,31 @@ int main() {
 	//cout << c;
 
 	//cout << readCinemaFromFile("Places.bin", 1);
+
+	/*int seat[] = { 3, 4, 5, 8 };
+	int* seats = new int[4];
+	for (int i = 0; i < 4; i++) {
+		seats[i] = seat[i];
+	}*/
+
+	//CinemaHall c1(4, seats);
+	/*displaySeatArrangementForCinema(seats, 4);
+	cout << endl;
+	chooseSeat(seats, 4);
+	
+	delete[] seats;*/
+
+	vector<vector<int>> seats = {
+		{1, 2, 3},
+		{4, 5, 6, 7},
+		{8, 9},
+		{10, 11, 12, 13, 14}
+	};
+	displaySeatArrangementForCinema_(seats);
+	cout << endl;
+	chooseSeat(seats);
+	cout << endl;
+	displaySeatArrangementForCinema_(seats);
 
 	return 0;
 }
