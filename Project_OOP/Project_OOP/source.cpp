@@ -255,6 +255,8 @@ int main() {
 	cout << endl << value;*/
 
 	//exploreAdminMenu();
+	/*Concert c = readConcertFromFile("Places.bin", 1);
+	cout << c;*/
 
 	/*Event e1("Magic Night", "30.12.2023", 4, 1, CONCERT);
 	cout << e1;
@@ -285,7 +287,7 @@ int main() {
 	
 	delete[] seats;*/
 
-	vector<vector<int>> seats = {
+	/*vector<vector<int>> seats = {
 		{1, 2, 3},
 		{4, 5, 6, 7},
 		{8, 9},
@@ -295,7 +297,7 @@ int main() {
 	cout << endl;
 	chooseSeat(seats);
 	cout << endl;
-	displaySeatArrangementForCinema_(seats);
+	displaySeatArrangementForCinema_(seats);*/
 
 	return 0;
 }
