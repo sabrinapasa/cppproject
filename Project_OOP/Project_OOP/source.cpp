@@ -68,6 +68,87 @@ void exploreAdminMenu() {
 	} while (choice!=4);
 }
 
+void userMenu() {
+	for (int i = 0; i < 10; i++) {
+		cout << endl;
+	}
+	cout << endl << "1. Buy ticket for cinema";
+	cout << endl << "2. Buy ticket for concert";
+	cout << endl << "3. Buy ticket for theatre";
+	cout << endl << "4. Buy ticket for stadium";
+	cout << endl << "5. Exit";
+	cout << endl << "Choose a number from 1 to 5 : ";
+}
+
+vector<vector<int>> seats = {
+		{1, 2, 3, 4, 5, 6},
+		{1, 2, 3, 4,5,6, 7, 8},
+		{1, 2,3 ,4 ,5 ,6 ,7 ,8, 9},
+		{1, 2, 3, 4, 5,6 ,7 ,8, 9,10}
+};
+
+int volume_persons = 10000;
+
+vector<vector<vector<int>>> stadium_seats = {
+		{
+			{1 , 2, 3, 4, 5},
+			{6, 7, 9, 8, 10},
+			{11, 12, 13, 14, 15}
+		},
+		{
+			{1 , 2, 3, 4, 5},
+			{6, 7, 9, 8, 10},
+			{11, 12, 13, 14, 15}
+		},
+		{
+			{1 , 2, 3, 4, 5},
+			{6, 7, 9, 8, 10},
+			{11, 12, 13, 14, 15}
+		}
+};
+
+Theatre_structure t;
+
+void exploreUserMenu() {
+	int choice = 0;
+	do {
+		userMenu();
+		cin >> choice;
+		if (choice == 1) {
+			displaySeatArrangementForCinema_(seats);
+			cout << endl;
+			chooseSeat(seats);
+			cout << endl;
+			displaySeatArrangementForCinema_(seats);
+			continue;
+		}
+		if (choice == 2) {
+			displayAvailableVolume(volume_persons);
+			cout << endl;
+			buyTicketConcert(volume_persons);
+			cout << endl;
+			displayAvailableVolume(volume_persons);
+			continue;
+		}
+		if (choice == 3) {
+			displaySeatArrangementForTheatre_(t);
+			cout << endl;
+			chooseSeat_Theatre(t);
+			cout << endl;
+			displaySeatArrangementForTheatre_(t);
+			continue;
+		}
+		if (choice == 4) {
+			displaySeatArrangementForStadium_(stadium_seats);
+			cout << endl;
+			chooseSeat_Stadium(stadium_seats);
+			cout << endl;
+			displaySeatArrangementForStadium_(stadium_seats);
+			continue;
+		}
+	} while (choice != 5);
+}
+
 int main() {
 	//CinemaHall cinema;
 	//cinema.printCinemaHall();
@@ -288,16 +369,66 @@ int main() {
 	delete[] seats;*/
 
 	/*vector<vector<int>> seats = {
-		{1, 2, 3},
-		{4, 5, 6, 7},
-		{8, 9},
-		{10, 11, 12, 13, 14}
+		{1, 2, 3, 4, 5, 6},
+		{1, 2, 3, 4,5,6, 7, 8},
+		{1, 2,3 ,4 ,5 ,6 ,7 ,8, 9},
+		{1, 2, 3, 4, 5,6 ,7 ,8, 9,10}
 	};
 	displaySeatArrangementForCinema_(seats);
 	cout << endl;
 	chooseSeat(seats);
 	cout << endl;
 	displaySeatArrangementForCinema_(seats);*/
+
+
+	/*vector<vector<vector<int>>> stadium_seats = {
+		{
+			{1 , 2, 3, 4, 5},
+			{6, 7, 9, 8, 10},
+			{11, 12, 13, 14, 15}
+		},
+		{
+			{1 , 2, 3, 4, 5},
+			{6, 7, 9, 8, 10},
+			{11, 12, 13, 14, 15}
+		},
+		{
+			{1 , 2, 3, 4, 5},
+			{6, 7, 9, 8, 10},
+			{11, 12, 13, 14, 15}
+		}
+	};
+	displaySeatArrangementForStadium_(stadium_seats);
+	cout << endl;
+	chooseSeat_Stadium(stadium_seats);
+	cout << endl;
+	displaySeatArrangementForStadium_(stadium_seats);*/
+
+	/*int volume_persons = 10000;
+	displayAvailableVolume(volume_persons);
+	cout << endl;
+	buyTicketConcert(volume_persons);
+	cout << endl;
+	displayAvailableVolume(volume_persons);*/
+
+	/*struct Theatre_structure {
+		vector<vector<int>> seatsTheatre = {
+			{1, 2, 3, 4, 5, 6},
+			{1, 2, 3, 4,5,6, 7, 8},
+			{1, 2,3 ,4 ,5 ,6 ,7 ,8, 9},
+			{1, 2, 3, 4, 5,6 ,7 ,8, 9,10}
+		};
+		vector<int> VIP_Places = { 1, 2, 3, 4, 5, 6 };
+	} t;*/
+
+	/*Theatre_structure t;
+	displaySeatArrangementForTheatre_(t);
+	cout << endl;
+	chooseSeat_Theatre(t);
+	cout << endl;
+	displaySeatArrangementForTheatre_(t);*/
+
+	exploreUserMenu();
 
 	return 0;
 }
